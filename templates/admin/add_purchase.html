@@ -1,0 +1,276 @@
+
+{% extends "admin/base_site.html" %}
+{% block title %}Players Per Venue{% endblock %}
+
+{% block extrahead %}
+
+    <head>
+
+        <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+
+        <!-- Latest compiled and minified CSS -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+
+        <!-- Optional theme -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
+        <link rel="stylesheet"
+              href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/css/bootstrap-datetimepicker.min.css"/>
+        <!-- Load icon library -->
+        <link rel="stylesheet"
+              href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.6/moment.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/js/bootstrap-datetimepicker.min.js"></script>
+
+        <!--AngularJs-->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.7.2/angular.min.js"></script>
+
+
+        <!--quicksearch-->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.quicksearch/2.4.0/jquery.quicksearch.min.js"></script>
+
+    </head>
+
+    <style>
+        .remove_button {
+            margin-top: 25px;
+        }
+
+        @media only screen and (max-width: 768px) {
+            .remove_button {
+                margin-top: 0px;
+            }
+        }
+
+
+    </style>
+
+
+    <script type="text/javascript">
+
+        window.onload = function () {
+
+            $('#delivery_date').datetimepicker({
+                format: 'YYYY-MM-DD'
+            });
+
+            $("#delivery_date").on("dp.change", function (e) {
+                angular.element(document.getElementById('mainBody')).scope().setDeliveryDate($('#delivery_date').data('date'));
+                //$('#enddatetimepicker').data("DateTimePicker").minDate(e.date);
+            });
+
+        };
+    </script>
+
+    <script type="text/javascript">
+
+        //console.log("Loaded");
+
+        var app = angular.module('myApp', []);
+
+        app.config(function ($interpolateProvider) {
+            $interpolateProvider.startSymbol('{[{');
+            $interpolateProvider.endSymbol('}]}');
+        });
+
+        app.controller('myCtrl', function ($scope, $http, $location, $window) {
+
+            $scope.API_URL = "http://127.0.0.1:8000";
+            //$scope.API_URL = "https://priyanshrajput.pythonanywhere.com";
+
+            $scope.delivery_date = null;
+
+            $scope.orderProducts = [];
+            var product = {"product": null, "unit": null, "size": null, "weight": null, "rate": null};
+            $scope.orderProducts.push(product);
+
+            $scope.setDeliveryDate = function (date) {
+                $scope.delivery_date = date;
+                $scope.order['delivery_date'] = $scope.delivery_date;
+            };
+
+            $scope.addProductOrder = function () {
+                console.log("addProductOrder call");
+                var product = {"product": null, "unit": null, "size": null, "weight": null, "rate": null};
+                $scope.orderProducts.push(product);
+            };
+
+            $scope.removeProductOrder = function (index) {
+                $scope.orderProducts.splice(index, 1);
+            };
+
+            $http({
+                method: 'GET',
+                url: $scope.API_URL + '/purchase/active-company/'
+            }).then(function mySuccess(response) {
+                console.log(response.data);
+                $scope.customers = response.data;
+            }, function myError(response) {
+            });
+
+            $http({
+                method: 'GET',
+                url: $scope.API_URL + '/order/product-sizes/'
+            }).then(function mySuccess(response) {
+                console.log(response.data);
+                $scope.prodtc_sizes = response.data;
+            }, function myError(response) {
+            });
+
+            $http({
+                method: 'GET',
+                url: $scope.API_URL + '/order/products/'
+            }).then(function mySuccess(response) {
+                console.log(response.data);
+                $scope.products = response.data;
+            }, function myError(response) {
+            });
+
+            $http({
+                method: 'GET',
+                url: $scope.API_URL + '/order/units/'
+            }).then(function mySuccess(response) {
+                console.log(response.data);
+                $scope.units = response.data;
+            }, function myError(response) {
+            });
+
+
+            $scope.submit = function () {
+                var data = {
+                    'order': $scope.order,
+                    'products': $scope.orderProducts
+                };
+
+                console.log(data);
+
+                $http.defaults.xsrfCookieName = 'csrftoken';
+                $http.defaults.xsrfHeaderName = 'X-CSRFToken';
+
+                $http({
+                    method: 'POST',
+                    url: $scope.API_URL + "/purchase/purchase-order/",
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    data: data
+
+                }).then(function mySuccess(response) {
+                    console.log(response.data);
+                    $window.history.back();
+                }, function myError(response) {
+                });
+            };
+
+        });
+
+        app.filter('companyName', function () {
+            return function (item) {
+                return item.company_name + ' (' + item.email + ')';
+            };
+        });
+
+    </script>
+
+{% endblock %}
+
+{% block content %}
+    <body id="mainBody" ng-app="myApp" ng-controller="myCtrl">
+    <div class="container">
+
+        <form ng-submit="submit()">
+
+            <div class="form-group">
+                <label for="customer">Select Company</label>
+                <select class="form-control" ng-model="order.user" id="customer"
+                        ng-options="item.id as (item | companyName) for item in customers" required>
+                    <option value=""> Select Customer *</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="description">Description</label>
+                <textarea class="form-control" ng-model="order.description" id="description" rows="3"
+                          required> </textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="exampleFormControlInput1">Delivery Date</label>
+                <div class='input-group date' id='delivery_date'>
+                    <input type='text' class="form-control"/>
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                </div>
+            </div>
+
+            <div class="row" ng-repeat="p in orderProducts">
+                <div class="form-group col-sm-3">
+                    <label for="product">Product</label>
+                    <select class="form-control" required id="product" ng-model="p.product"
+                            ng-options="item.id as item.product_name for item in products">
+                        <option value=""> Select product *</option>
+                    </select>
+                </div>
+                <div class="form-group col-lg-2">
+                    <label for="inputSize">Product Size</label>
+                    <select id="inputSize" required class="form-control" ng-model="p.size"
+                            ng-options="item.id as item.size for item in prodtc_sizes">
+                        <option value=""> Select product size *</option>
+                    </select>
+                </div>
+                <div class="form-group col-lg-2">
+                    <label for="weight">Weight</label>
+                    <input type="number" required class="form-control" id="weight" placeholder="10.00"
+                           ng-model="p.weight">
+                </div>
+                <div class="form-group col-lg-2">
+                    <label for="unit">Unit</label>
+                    <select class="form-control" required id="unit" ng-model="p.unit"
+                            ng-options="item.id as item.name for item in units">
+                        <option value=""> Select unit *</option>
+                    </select>
+                </div>
+                <div class="form-group col-lg-2">
+                    <label for="rate">Rate/Unit</label>
+                    <input type="number" required class="form-control" id="rate" placeholder="10.00"
+                           ng-model="p.rate">
+                </div>
+                <div class="form-group col-lg-1">
+
+                    <div class="remove_button" ng-hide="$index==0">
+
+                        <button type="button" class="btn btn-danger btn-circle" ng-click="removeProductOrder($index)"><i
+                                class="glyphicon glyphicon-remove"></i></button>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="form-group">
+                <div class="form-check">
+                    <button type="button" class="btn btn-pill btn-primary" ng-click="addProductOrder()">Add Product
+                    </button>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="exampleFormControlInput1">Discount</label>
+                <input type="number" class="form-control" ng-model="order.discount" id="discount" placeholder="100.00">
+            </div>
+
+            <div class="button_bg_custom">
+
+                <input type="submit" value="Save" class="default" name="save"/>
+            </div>
+        </form>
+    </div>
+    <!-- ends -->
+
+    </body>
+{% endblock %}
+
+

@@ -1,0 +1,26 @@
+.env
+.idea
+.vagrant
+*.pyc
+*.retry
+*.sublime-project
+*.sublime-workspace
+tmp
+*.sqlite3
+*.sqlite4
+*.sqlite5
+*.sqlite6
+
+
+.DS_Store
+
+trivianights_api/local_settings.py
+/dist/
+/media/
+/account/migrations
+/order/migrations
+/purchase/migrations
+
+# Emacs backup and lock files
+*~
+\#*

@@ -1,0 +1,230 @@
+{% load i18n static %}<!DOCTYPE html>
+{% get_current_language as LANGUAGE_CODE %}{% get_current_language_bidi as LANGUAGE_BIDI %}
+<html lang="{{ LANGUAGE_CODE|default:"en-us" }}" {% if LANGUAGE_BIDI %}dir="rtl"{% endif %}>
+<head>
+    <title>{% block title %}{% endblock %}</title>
+    <meta content="width=device-width, initial-scale=1" name="viewport"/>
+    <link rel="stylesheet" type="text/css"
+          href="{% block stylesheet %}{% static "admin/css/base.css" %}{% endblock %}"/>
+    {% if LANGUAGE_BIDI %}
+        <link rel="stylesheet" type="text/css"
+              href="{% block stylesheet_rtl %}{% static "admin/css/rtl.css" %}{% endblock %}"/>{% endif %}
+    {% block extrahead %}{% endblock %}
+    {% block blockbots %}
+        <meta name="robots" content="NONE,NOARCHIVE"/>{% endblock %}
+
+    {% block extrastyle %}
+        <style>
+            .dropbtn {
+                background-color: #417690;
+                color: white;
+                padding: 0px 40px;
+                height: 40px;
+                cursor: pointer;
+                font-size: 14px;
+                border: none;
+                display: block;
+            }
+
+            .dropdown {
+                position: relative;
+                display: inline-block;
+                float: right;
+            }
+
+            .dropdown-content {
+                display: none;
+                position: absolute;
+                background-color: #417690;
+                z-index: 999999;
+                width: 200px;
+                right: 0px;
+            }
+
+            .dropdown-content a {
+                color: black;
+                padding: 0px 16px;
+                text-decoration: none;
+                display: block;
+                text-align: center;
+            }
+
+            .dropdown-content a:hover {
+                background-color: #383838;
+            }
+
+            .dropdown:hover .dropdown-content {
+                display: block;
+            }
+
+            .dropdown:hover .dropbtn {
+                background-color: #417690;
+            }
+
+            #header {
+                overflow: initial;
+            }
+
+            #container {
+                width: auto;
+                min-width: auto;
+            }
+
+            .register_cl {
+                background: #5c6dbe;
+                display: block;
+
+                height: 10px;
+            }
+
+            .non_register_cl {
+
+                background: #c44645;
+                display: block;
+                height: 10px;
+            }
+
+            .register_team {
+                background: #8bcc52;
+                display: block;
+
+                height: 10px;
+            }
+
+            .non_register_team {
+
+                background: #39c7ac;
+                display: block;
+
+                height: 10px;
+            }
+
+            .mobile_view {
+                display: block;
+            }
+
+            .desktop_view {
+                display: none;
+            }
+
+            .button_bg_custom {
+                padding: 12px 14px;
+                margin: 0 0 20px;
+                background: #f8f8f8;
+                border: 1px solid #eee;
+                border-radius: 4px;
+                text-align: right;
+                overflow: hidden;
+            }
+
+            .button_bg_custom input.default {
+                margin: 0 0 0 8px;
+                text-transform: uppercase;
+                height: 35px;
+                line-height: 15px;
+                float: right;
+                border: none;
+                font-weight: 400;
+                background: #417690;
+            }
+
+            @media screen and (min-width: 768px) {
+                .mobile_view {
+                    display: none;
+                }
+
+                .desktop_view {
+                    display: block;
+                }
+            }
+
+
+        </style>
+    {% endblock %}
+</head>
+{% load i18n %}
+
+<body class="{% if is_popup %}popup {% endif %}{% block bodyclass %}{% endblock %}"
+      data-admin-utc-offset="{% now "Z" %}">
+
+<!-- Container -->
+<div id="container">
+
+    {% if not is_popup %}
+        <!-- Header -->
+        <div id="header">
+            <div id="branding">
+                {% block branding %}{% endblock %}
+            </div>
+            {% block usertools %}
+                {% if has_permission %}
+                    <div id="user-tools">
+                        {% block welcome-msg %}
+                            {% trans 'Welcome,' %}
+                            <strong>{% firstof user.get_short_name user.get_username %}</strong>.
+                        {% endblock %}
+                        {% block userlinks %}
+                            {% if site_url %}
+                                <a href="{{ site_url }}">{% trans 'View site' %}</a> /
+                            {% endif %}
+                            {% if user.is_active and user.is_staff %}
+                                {% url 'django-admindocs-docroot' as docsroot %}
+                                {% if docsroot %}
+                                    <a href="{{ docsroot }}">{% trans 'Documentation' %}</a> /
+                                {% endif %}
+                            {% endif %}
+                            {% if user.has_usable_password %}
+                                <a href="{% url 'admin:password_change' %}">{% trans 'Change password' %}</a> /
+                            {% endif %}
+                            <a href="{% url 'admin:logout' %}">{% trans 'Log out' %}</a>
+
+                        {% endblock %}
+                        <div class="dropdown">
+                            <button class="dropbtn">Customer</button>
+                            <div class="dropdown-content">
+                                <a href="{% url 'add-new-order' %}"><strong>{% trans 'Add New oreder' %}</strong></a>
+                                <a href="{% url 'add-new-purchase' %}"><strong>{% trans 'Add New Purchase' %}</strong></a>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            {% endblock %}
+            {% block nav-global %}{% endblock %}
+        </div>
+        <!-- END Header -->
+        {% block breadcrumbs %}
+            <div class="breadcrumbs">
+                <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+                {% if title %} &rsaquo; {{ title }}{% endif %}
+            </div>
+        {% endblock %}
+    {% endif %}
+
+    {% block messages %}
+        {% if messages %}
+            <ul class="messagelist">{% for message in messages %}
+                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message|capfirst }}</li>
+            {% endfor %}</ul>
+        {% endif %}
+    {% endblock messages %}
+
+    <!-- Content -->
+    <div id="content" class="{% block coltype %}colM{% endblock %}">
+        {% block pretitle %}{% endblock %}
+        {% block content_title %}{% if title %}<h1>{{ title }}</h1>{% endif %}{% endblock %}
+        {% block content %}
+            {% block object-tools %}{% endblock %}
+            {{ content }}
+        {% endblock %}
+        {% block sidebar %}{% endblock %}
+        <br class="clear"/>
+    </div>
+    <!-- END Content -->
+
+    {% block footer %}
+        <div id="footer"></div>{% endblock %}
+</div>
+<!-- END Container -->
+
+</body>
+</html>

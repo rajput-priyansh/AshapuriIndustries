@@ -1,0 +1,398 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+{% load static %}
+<html>
+<head>
+    <title>Shreeji Packaging</title>
+    <style type="text/css">
+        body {
+            font-weight: 200;
+            font-size: 12px;
+        }
+
+        .header {
+            font-size: 15px;
+            font-weight: 100;
+            text-align: center;
+            color: #007cae;
+        }
+
+        .tax_title {
+            font-size: 18px;
+            font-weight: 100;
+            /* text-align: right;*/
+            padding: 6px 12px 0px 12px;
+            line-height: 1.5;
+            margin-left: 150px;
+            color: #333;
+        }
+
+        .title {
+            font-size: 24px;
+            font-weight: 100;
+            /* text-align: right;*/
+            padding: 6px 12px 0px 12px;
+            line-height: 1.5;
+            color: #333;
+        }
+
+        .title span {
+            color: #333;
+        }
+
+        .address {
+            color: #333;
+            font-size: 14px;
+        }
+
+        p, h1 {
+            margin: 0;
+        }
+
+        .details_buyer {
+            text-align: center;
+            border: 1px solid #333;
+            line-height: 1;
+            padding: 6px;
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .details_buyer_table {
+            margin-top: 6px;
+
+        }
+
+        .order_item {
+            line-height: 1;
+            border: 1px solid #333;
+            border-spacing: 0px;
+            font-size: 12px;
+            text-align: center;
+            padding: 3px;
+            vertical-align: center;
+            margin-top: 10px;
+        }
+
+        label {
+            font-size: 8px;
+            font-weight: 100;
+            /* text-align: right;*/
+            padding: 0px 10px 0px 10px;
+            line-height: 15px;
+            color: #333;
+        }
+
+        .table_invoice_type {
+            font-size: 8px;
+            line-height: 15px;
+            border: 1px solid #333;
+        }
+
+        .square {
+            height: 30px;
+            width: 30px;
+        }
+
+        .square_checkbox {
+            height: 15px;
+            width: 15px;
+        }
+
+
+    </style>
+</head>
+<body>
+<div class='wrapper'>
+    <div class="header">
+        <div class="head" style="text-align:center;">
+            <img class="square" src="/home/priyanshRajput/shreejipackaging-WEB/static/order/images/icon.jpg" alt="logo"
+                 style="display: inline-block;vertical-align: middle;line-height: 58px;">
+            &nbsp;<p class='title' style="display: inline-block;"> Shreeji Packaging</p>
+            <div style="display: block;clear: both;"></div>
+        </div>
+        <p class="address">Manufacturers Of L.D.P.E., H.m., Colour Bags, Roll, Sheets, Liner & Granules. <br>A-1/273/B-1,
+            G.I.D.C., Makarpura, Vadodara - 390010. <b>M. : {{ setting_account.mobile_number }}</b>
+            <br><b>GSTIN : {{ setting_account.gst_number }}</b></p>
+        <table cellspacing="0" cellpadding="0" class="table_invoice_type">
+            <tr>
+                <th colspan="2" class="tax_title">TAX INVOICE</th>
+                <td style="padding: 4px 2px 4px 2px;">
+
+                    <table>
+                        <tr>
+                            <td style="text-align:left;padding: 0; margin: 0;">
+                                <img class="square_checkbox" src={% if invoice_type == 1 %}
+                                    "/home/priyanshRajput/shreejipackaging-WEB/static/order/images/ic_checked.png" {% else %}
+                                    "/home/priyanshRajput/shreejipackaging-WEB/static/order/images/ic_unchecked.png" {% endif %}
+                                alt="ic_checked">
+                                &nbsp;&nbsp;
+                                <label style="font-size: 10px; padding-left: 10px;"> Original for Recipient </label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="text-align:left;padding: 0; margin: 0;">
+                                <img class="square_checkbox" src={% if invoice_type == 2 %}
+                                    "/home/priyanshRajput/shreejipackaging-WEB/static/order/images/ic_checked.png" {% else %}
+                                    "/home/priyanshRajput/shreejipackaging-WEB/static/order/images/ic_unchecked.png" {% endif %}
+                                alt="ic_checked">
+                                &nbsp;&nbsp;
+                                <label style="font-size: 10px; padding-left: 10px;"> Duplicate for
+                                    supplier/Transporter </label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="text-align:left;padding: 0; margin: 0;">
+                                <img class="square_checkbox" src={% if invoice_type == 3 %}
+                                    "/home/priyanshRajput/shreejipackaging-WEB/static/order/images/ic_checked.png" {% else %}
+                                    "/home/priyanshRajput/shreejipackaging-WEB/static/order/images/ic_unchecked.png" {% endif %}
+                                alt="ic_checked">
+                                &nbsp;&nbsp;<label style="font-size: 10px; padding-left: 10px;"> Triplicate for
+                                Supplier </label>
+                            </td>
+                        </tr>
+                    </table>
+
+                </td>
+            </tr>
+        </table>
+    </div>
+
+</div>
+
+<table cellspacing="0" cellpadding="0" style=" padding: 2px;margin-top: 10px;" class="">
+
+    <tr>
+        <td>Reverse Charge :</td>
+        <td>{{ " " }}</td>
+        <td>Transportation Mode :</td>
+        <td>{{ transportation_mode }}</td>
+
+    </tr>
+    <tr>
+        <td>Invoice No. :</td>
+        <td>{{ order_number }}</td>
+        <td>Vehicle Number :</td>
+        <td>{{ vehicle_number }}</td>
+
+    </tr>
+
+    <tr>
+        <td>Invoice Date :</td>
+        <td>{{ str_invoice_date }}</td>
+        <td>Date Of Supply</td>
+        <td>{{ str_delivery_date }}</td>
+
+    </tr>
+    <tr>
+        <td style="width: 20%;vertical-align: top;">State :&nbsp;&nbsp;&nbsp;&nbsp;{% if setting_account.state %}
+            {{ setting_account.state }}{% else %}
+            {{ " " }}{% endif %}</td>
+        <td style="width: 40%;vertical-align: top;">
+            <table width="150px">
+                <tr>
+                    <td style="padding-top: 3px;padding-bottom: 0px;border: 1px solid black; text-align: center; width: 70%;">
+                        State Code:
+                    </td>
+                    <td style="padding-top: 3px; padding-bottom: 0px;border: 1px solid black;text-align: center; width: 30%;">
+                        {% if setting_account.state_code %}{{ setting_account.state_code }}{% else %}
+                            {{ " " }}{% endif %}</td>
+                </tr>
+            </table>
+        </td>
+        <td style="width: 22%; vertical-align: top;">Place Of Supply</td>
+        <td style="width: 18%; vertical-align: top;">{{ shipping_address }}</td>
+
+    </tr>
+
+</table>
+
+<table cellspacing="0" cellpadding="0" style=" padding: 2px;" class="details_buyer_table">
+    <tr>
+        <th colspan="2"><p class="details_buyer">Details Of Receiver (Billed to)</p></th>
+        <th colspan="2"><p class="details_buyer">Details Of Consignee (Shipped to)</p></th>
+    </tr>
+    <tr>
+        <td style="width: 10%;">Name :</td>
+        <td style="width: 40%;">{% if user.first_name %}{{ user.first_name }} {% else %} {{ " " }} {% endif %}{% if user.last_name %}{{ user.last_name }} {% else %} {{ " " }} {% endif %} </td>
+        <td style="width: 10%;">Name :</td>
+        <td style="width: 40%;">{% if consignee_name %}{{ consignee_name }} {% else %} {{ " " }} {% endif %}</td>
+    </tr>
+    <tr>
+        <td style="vertical-align: top;">Address :</td>
+        <td style="vertical-align: top;">{{ user.address }}</td>
+        <td style="vertical-align: top;">Address :</td>
+        <td style="vertical-align: top;">
+            {% if consignee_address %}{{ consignee_address }} {% else %} {{ " " }} {% endif %}</td>
+    </tr>
+    <tr>
+        <td>PAN No. :</td>
+        <td>{% if user.pan_number %}{{ user.pan_number }}{% else %}{{ " " }}{% endif %}</td>
+        <td>PAN No. :</td>
+        <td>{% if consignee_pan %}{{ consignee_pan }}{% else %}{{ " " }}{% endif %}</td>
+    </tr>
+    <tr>
+        <td>GST No. :</td>
+        <td>{% if user.gst_number %}{{ user.gst_number }}{% else %}{{ " " }}{% endif %}</td>
+        <td>GST No. :</td>
+        <td>{% if consignee_gst %}{{ consignee_gst }}{% else %}{{ " " }}{% endif %}</td>
+    </tr>
+    <tr>
+        <td>State :</td>
+        <td>
+            <table>
+                <tr>
+                    <td style="padding-top: 2px;text-align: center; width: 30%;">
+                        {% if state %}{{ state }}{% else %}{{ " " }}{% endif %}</td>
+                    <td style="padding-top: 2px;padding-bottom: 0px;border: 1px solid black; text-align: center; width: 50%;">
+                        State Code:
+                    </td>
+                    <td style="padding-top: 2px; padding-bottom: 0px;border: 1px solid black;text-align: center; width: 20%;">{{ state_code }}</td>
+                </tr>
+            </table>
+        </td>
+        <td>State :</td>
+        <td>
+            <table>
+                <tr>
+                    <td style="padding-top: 2px;text-align: center; width: 30%;">
+                        {% if state %}{{ state }}{% else %}{{ " " }}{% endif %}</td>
+                    <td style="padding-top: 2px;padding-bottom: 0px;border: 1px solid black; text-align: center; width: 50%;">
+                        State Code:
+                    </td>
+                    <td style="padding-top: 2px; padding-bottom: 0px;border: 1px solid black;text-align: center; width: 20%;">{{ state_code }}</td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+
+</table>
+
+<table class="order_item">
+    <tr>
+        <th style="width:10%;">
+            SR. No
+        </th>
+        <th style="width:30%;">
+            Description of Goods
+        </th>
+        <th style="width:15%;">
+            HSN/ACS
+        </th>
+        <th style="width:10%;">
+            Qty
+        </th>
+        <th style="width:10%;">
+            Per
+        </th>
+        <th style="width:10%;">
+            Rate
+        </th>
+        <th style="width:15%;">Total</th>
+    </tr>
+    {% for product in products %}
+        <tr>
+            <td style="width:10%;">
+                {{ forloop.counter }}
+            </td>
+            <td style="width:30%;">
+                {{ product.product.product_name }} - {{ product.product.product_type }}
+            </td>
+            <td style="width:15%;">
+                {% if product.product.hsn_number %} {{ product.product.hsn_number }} {% else %} {{ " " }} {% endif %}
+            </td>
+            <td style="width:10%;">
+                {{ product.weight }}
+            </td>
+            <td style="width:10%;">
+                {{ product.unit.name }}
+            </td>
+            <td style="width:10%;">
+                {{ product.rate }}
+            </td>
+            <td style="width:15%;">{{ product.amount }}</td>
+        </tr>
+    {% endfor %}
+
+    <tr>
+        <td colspan="3" rowspan="3">
+            Total Invoice Amount in words : <b>{{ order_total.str_total_in_words }}</b>
+        </td>
+        <td colspan="3">Total Amount Before Tax</td>
+        <td style="width:15%;">{{ order_total.total }}</td>
+    </tr>
+    <tr>
+        <td colspan="3">ADD : <b>CGST</b> {{ setting_account.setting_cgst }}%</td>
+        <td style="width:15%;">{{ order_total.cgst }}</td>
+    </tr>
+    <tr>
+        <td colspan="3">ADD : <b>SGST</b> {{ setting_account.setting_sgst }}%</td>
+        <td style="width:15%;">{{ order_total.sgst }}</td>
+    </tr>
+    <tr>
+        <td colspan="3" rowspan="4" style="text-align: left;padding: 3px;">
+            <table>
+                <tr>
+                    <td colspan="2"><b>Bank Details:</b></td>
+                </tr>
+                <tr>
+                    <td style="width:40%;">Bank Name:</td>
+                    <td><b>{{ setting_account.bank_name }}</b></td>
+                </tr>
+                <tr>
+                    <td style="width:40%;">Account Number:</td>
+                    <td><b>{{ setting_account.account_number }}</b></td>
+                </tr>
+                <tr>
+                    <td style="width:40%;">IFSC Code:</td>
+                    <td><b>{{ setting_account.bank_ifsc }}</b></td>
+                </tr>
+                <tr>
+                    <td style="width:40%;">Bank Address:</td>
+                    <td><b>{{ setting_account.bank_address }}</b></td>
+                </tr>
+            </table>
+
+
+        </td>
+        <td colspan="3">ADD : <b>IGST</b> {{ setting_account.setting_igst }}%</td>
+        <td style="width:15%;">{{ order_total.igst }}</td>
+    </tr>
+    <tr>
+        <td colspan="3">Tax Amount:<b>GST</b></td>
+        <td style="width:15%;">{{ order_total.total_tax }}</td>
+    </tr>
+    <tr>
+        <td colspan="3">Rounded</td>
+        <td style="width:15%;">{{ order_total.order_total_rounded }}</td>
+    </tr>
+    <tr>
+        <td colspan="3"><b>TOTAL AMOUNT</b></td>
+        <td style="width:15%;">INR {{ order_total.grand_total }}</td>
+    </tr>
+
+    <tr>
+        <td colspan="3" style="font-size: 12px; text-align: left;padding: 2px;">
+            <b>Terms & Conditions :</b>
+            {% for tc in terms_conditions %}
+                <br>{{ forloop.counter }}. {{ tc.term_condition }}
+            {% endfor %}
+        </td>
+        <td style="font-size: 14px">
+            Common Seal
+        </td>
+        <td colspan="3" style="">
+            <p style="font-size: 9px;">Certified that the particulars given above are true and correct.</p>
+            <p style="font-size: 22px;">For Shreeji Packaging</p>
+            <br>
+            <br>
+            <p>Authorised Signatory &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b
+                    style="float: inherit; font-size: 12px;">E & O. E.</b></p>
+        </td>
+    </tr>
+
+</table>
+
+
+</body>
+</html>
