@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
+from django.utils.encoding import smart_str
 from django.utils.html import format_html
 from account.models import Account, SettingAccount, SettingGST
 
@@ -8,20 +9,17 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 
 
-class Unit(models.Model):
-    name = models.CharField(max_length=50, null=False, blank=False, help_text="Unit name e.i. KG, GM")
+class BagWightUnit(models.Model):
+    display_name = models.CharField(max_length=50, null=False, blank=False, help_text="Unit name e.i. (50KG), (25GM)")
+    unit = models.CharField(max_length=50,  default="", help_text="Unit e.i. KG, GM")
+    wight = models.FloatField(default=0, help_text="Unit Wight e.i. 50, 25")
     description = models.TextField(null=True, blank=True, help_text="Write about the unit")
 
     def __unicode__(self):
-        return self.name.encode('ascii', 'replace')
+        return self.display_name.encode('ascii', 'replace')
 
-
-class ProductSize(models.Model):
-    size = models.CharField(max_length=50, null=False, blank=False, help_text="Product size e.i Bag(KG)")
-    description = models.TextField(null=True, blank=True, help_text="Write about the size")
-
-    def __unicode__(self):
-        return self.size.encode('ascii', 'replace')
+    def __str__(self):
+        return smart_str(self.display_name)
 
 
 class Product(models.Model):
@@ -31,6 +29,9 @@ class Product(models.Model):
 
     def __unicode__(self):
         return self.product_name.encode('ascii', 'replace')
+
+    def __str__(self):
+        return smart_str(self.product_name)
 
 
 class CustomerOrder(models.Model):
@@ -74,10 +75,6 @@ class CustomerOrder(models.Model):
     grand_total = models.FloatField(default=0)
     transportation_mode = models.CharField(max_length=50, help_text="Transportation Mode", default="")
     vehicle_number = models.CharField(max_length=50, help_text="Vehicle Number", default="")
-    consignee_name = models.CharField(max_length=250, help_text="Consignee Full Name", blank=True, null=True)
-    consignee_address = models.CharField(max_length=350, help_text="Consignee Full Address", blank=True, null=True)
-    consignee_pan = models.CharField(max_length=50, help_text="Consignee PAN CARD number", blank=True, null=True)
-    consignee_gst = models.CharField(max_length=100, help_text="Consignee GST number", blank=True, null=True)
     order_number = models.CharField(max_length=100, help_text="Order number", blank=True, null=True)
     invoice_date = models.DateTimeField('invoice date', blank=True, default=timezone.now)
     settingGST = models.ForeignKey(SettingGST, on_delete=models.CASCADE)
@@ -85,27 +82,36 @@ class CustomerOrder(models.Model):
     def __unicode__(self):
         return "{}".format(self.user.full_name).encode('ascii', 'replace')
 
+    def __str__(self):
+        return smart_str("{}".format(self.user.full_name).encode('ascii', 'replace'))
+
     def all_order_product(self):
         order_products = OrderProducts.objects.filter(customer_order=self)
         if not order_products:
             return ""
         return format_html('<span>{}</span>', "".join(['({} - {} - {}{})'.format(
-            op.product.product_name, op.product_size.size, op.weight, op.unit.name) for op in order_products]))
+            op.product.product_name, op.no_of_bag, (op.no_of_bag * op.bag_wight_unit.wight), op.bag_wight_unit.display_name) for op in order_products]))
 
 
 class OrderProducts(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    product_size = models.ForeignKey(ProductSize, related_name='product', blank=True, null=True)
-    unit = models.ForeignKey(Unit, on_delete=models.CASCADE)
+    no_of_bag = models.IntegerField(default=0, help_text="Product Bag number e.i Bag, Box, Box karton")
+    bag_wight_unit = models.ForeignKey(BagWightUnit, on_delete=models.CASCADE)
     customer_order = models.ForeignKey(CustomerOrder, on_delete=models.SET_NULL, null=True,
                                        related_name='customer_order')
-    weight = models.FloatField(default=0)
     rate = models.FloatField(default=0)
     creation_date = models.DateTimeField('date created', auto_now_add=True)
     modified_date = models.DateTimeField('date last modified', auto_now=True)
 
     def __unicode__(self):
-        return 'PRODUCT {} - {} {}'.format(self.product.product_name, self.weight, self.unit.name)
+        return 'PRODUCT {} - {} {}'.format(self.product.product_name,
+                                           (self.bag_wight_unit.wight * self.no_of_bag),
+                                           self.bag_wight_unit.display_name)
+
+    def __str__(self):
+        return smart_str('PRODUCT {} - {} {}'.format(self.product.product_name,
+                                           (self.bag_wight_unit.wight * self.no_of_bag),
+                                           self.bag_wight_unit.display_name))
 
 
 @receiver(post_save, sender=OrderProducts, dispatch_uid="update_tax_count")
@@ -119,7 +125,7 @@ def update_tax(sender, instance, **kwargs):
     setting_account = SettingAccount.objects.last()
     setting_GST = instance.customer_order.settingGST
 
-    total += instance.weight * instance.rate
+    total += (instance.bag_wight_unit.wight * instance.no_of_bag) * instance.rate
 
     discount = 0
     cgst = 0

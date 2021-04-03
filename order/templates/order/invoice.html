@@ -164,9 +164,9 @@
                 <td style="width: 40%; text-align: left;">
                     <table style="width: 100%;">
                         <tr>
-                            <td class="sub_title" style="width: 50%;"><b>VEHICALE NO :
+                            <td class="sub_title" style="width: 50%;"><b>VEHICLE NO :
                                 {% if vehicle_number %}{{ vehicle_number }} {% else %}{{ " " }}{% endif %}</b></td>
-                            <td class="sub_title" style="width: 50%;"><b>TRANSPORTATION MODE :
+                            <td class="sub_title" style="width: 50%;"><b>TRANSPORT MODE :
                                 {% if transportation_mode %}{{ transportation_mode }} {% else %}{{ " " }}{% endif %}</b>
                             </td>
                         </tr>
@@ -191,10 +191,10 @@
                 HSN/ACS
             </th>
             <th style="width:10%; background-color:#2E2E2E; color: #ffffff;">
-                Qty
+                Bag
             </th>
             <th style="width:10%; background-color:#2E2E2E; color: #ffffff;">
-                Per
+                Qty
             </th>
             <th style="width:10%; background-color:#2E2E2E; color: #ffffff;">
                 Rate
@@ -214,10 +214,10 @@
                         {{ " " }} {% endif %}
                 </td>
                 <td style="width:10%;">
-                    {{ product.weight }}
+                    {{ product.no_of_bag }}({{ product.bag_wight_unit.display_name }})
                 </td>
                 <td style="width:10%;">
-                    {{ product.unit.name }}
+                    {{ product.weight }}{{ product.bag_wight_unit.unit }}
                 </td>
                 <td style="width:10%;">
                     {{ product.rate }}
@@ -225,7 +225,7 @@
                 <td style="width:15%;">{{ product.amount }}</td>
             </tr>
         {% endfor %}
-        {% if products|length <= 3 %}
+        {% if products|length <= 9 %}
             <tr>
                 <td style="width:10%; border-top: 0; border-bottom: 0;">&nbsp;</td>
                 <td style="width:30%; border-top: 0; border-bottom: 0;">{{ " " }}</td>
@@ -326,11 +326,11 @@
             <td style="width:15%;">{{ order_total.total }}</td>
         </tr>
         <tr>
-            <td colspan="3">ADD : <b>CGST</b> {{ setting_account.setting_cgst }}%</td>
+            <td colspan="3">ADD : <b>CGST</b> {{ settingGST.setting_cgst }}%</td>
             <td style="width:15%;">{{ order_total.cgst }}</td>
         </tr>
         <tr>
-            <td colspan="3">ADD : <b>SGST</b> {{ setting_account.setting_sgst }}%</td>
+            <td colspan="3">ADD : <b>SGST</b> {{ settingGST.setting_sgst }}%</td>
             <td style="width:15%;">{{ order_total.sgst }}</td>
         </tr>
         <tr>
@@ -359,7 +359,7 @@
 
 
             </td>
-            <td colspan="3">ADD : <b>IGST</b> {{ setting_account.setting_igst }}%</td>
+            <td colspan="3">ADD : <b>IGST</b> {{ settingGST.setting_igst }}%</td>
             <td style="width:15%;">{{ order_total.igst }}</td>
         </tr>
         <tr>

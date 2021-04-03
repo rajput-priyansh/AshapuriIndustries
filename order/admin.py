@@ -7,16 +7,12 @@ from AshapuriIndustries import settings
 from .models import *
 
 
-class UnitAdmin(admin.ModelAdmin):
-    list_display = ['name', 'description']
-
-
-class ProductSizeAdmin(admin.ModelAdmin):
-    list_display = ['size', 'description']
+class BagWightUnitAdmin(admin.ModelAdmin):
+    list_display = ['display_name', 'wight', 'unit', 'description']
 
 
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ['product_name', 'product_type']
+    list_display = ['product_name', 'product_type', 'hsn_number']
 
 
 class ChoiceOrderProductInline(admin.TabularInline):
@@ -35,13 +31,11 @@ class CustomerOrderAdmin(admin.ModelAdmin):
     ]
     search_fields = [
         'user__email',
-        'user__first_name',
-        'user__last_name',
+        'user__full_name',
     ]
 
     fields = ['user', 'delivery_date', 'invoice_date', 'status', 'invoice_type', 'description', 'shipping_address',
-              'state', 'state_code', 'transportation_mode', 'vehicle_number', 'consignee_name', 'consignee_address',
-              'consignee_pan', 'consignee_gst', 'settingGST']
+              'state', 'state_code', 'transportation_mode', 'vehicle_number', 'settingGST']
 
     inlines = [ChoiceOrderProductInline]
 
@@ -70,7 +64,6 @@ class CustomerOrderAdmin(admin.ModelAdmin):
     triplicate_invoice.short_description = 'Triplicate Invoice'
 
 
-admin.site.register(Unit, UnitAdmin)
-admin.site.register(ProductSize, ProductSizeAdmin)
+admin.site.register(BagWightUnit, BagWightUnitAdmin)
 admin.site.register(Product, ProductAdmin)
 admin.site.register(CustomerOrder, CustomerOrderAdmin)

@@ -8,36 +8,33 @@ from num2words import num2words
 import math
 
 
-class ProductSizeSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ProductSize
-        fields = ['id', 'size', 'description']
-
-
 class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = ['id', 'product_name', 'product_type', 'hsn_number']
 
 
-class UnitSerializer(serializers.ModelSerializer):
+class BagWightUnitSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Unit
-        fields = ['id', 'name', 'description']
+        model = BagWightUnit
+        fields = ['id', 'display_name', 'wight', 'unit', 'description']
 
 
 class OrderProductsSerializer(serializers.ModelSerializer):
     product = ProductSerializer()
-    product_size = ProductSizeSerializer()
-    unit = UnitSerializer()
+    bag_wight_unit = BagWightUnitSerializer()
     amount = serializers.SerializerMethodField(read_only=True)
+    weight = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = OrderProducts
-        fields = ['id', 'weight', 'rate', 'product', 'product_size', 'unit', 'amount']
+        fields = ['id', 'weight', 'rate', 'product', 'no_of_bag', 'bag_wight_unit', 'amount']
 
     def get_amount(self, p):
-        return p.weight * p.rate
+        return (p.no_of_bag * p.bag_wight_unit.wight) * p.rate
+
+    def get_weight(self, p):
+        return p.no_of_bag * p.bag_wight_unit.wight
 
 
 class OrderTotal:
@@ -78,14 +75,14 @@ class CustomerOrderSerializer(serializers.ModelSerializer):
     str_invoice_date = serializers.SerializerMethodField(read_only=True)
     order_total = serializers.SerializerMethodField(read_only=True)
     user = ProfileSerializer()
+    settingGST = SettingGSTSerializer()
 
     class Meta:
         model = CustomerOrder
         fields = ['id', 'order_number', 'delivery_date', 'status', 'description', 'shipping_address', 'products',
-                  'creation_date', 'user', 'host', 'setting_account', 'transportation_mode',
+                  'creation_date', 'user', 'settingGST', 'host', 'setting_account', 'transportation_mode',
                   'vehicle_number', 'str_status', 'state_code', 'state', 'terms_conditions', 'str_creation_date',
-                  'str_delivery_date', 'consignee_name', 'consignee_address', 'invoice_type', 'consignee_pan',
-                  'consignee_gst', 'order_total', 'str_invoice_date']
+                  'str_delivery_date', 'invoice_type', 'order_total', 'str_invoice_date']
 
     def get_products(self, obj):
         order_products = OrderProducts.objects.filter(customer_order=obj)
@@ -134,7 +131,7 @@ class CustomerOrderSerializer(serializers.ModelSerializer):
         setting_account = SettingAccount.objects.last()
         setting_Gst = obj.settingGST
         for product in order_products:
-            total += product.weight * product.rate
+            total += (product.bag_wight_unit.wight * product.no_of_bag) * product.rate
 
         discount = 0
         cgst = 0

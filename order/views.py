@@ -42,36 +42,18 @@ class MobileProductList(generics.ListCreateAPIView):
 
 
 class UnitList(generics.ListCreateAPIView):
-    queryset = Unit.objects.all()
-    serializer_class = UnitSerializer
+    queryset = BagWightUnit.objects.all()
+    serializer_class = BagWightUnitSerializer
 
 
 class MobileUnitList(generics.ListCreateAPIView):
-    queryset = Unit.objects.all()
-    serializer_class = UnitSerializer
+    queryset = BagWightUnit.objects.all()
+    serializer_class = BagWightUnitSerializer
 
     def list(self, request):
         try:
             queryset = self.get_queryset()
-            serializer = UnitSerializer(queryset, many=True)
-            return Response({"status": 1, "data": serializer.data})
-        except:
-            return Response({"status": 0})
-
-
-class ProductSizeList(generics.ListCreateAPIView):
-    queryset = ProductSize.objects.all()
-    serializer_class = ProductSizeSerializer
-
-
-class MobileProductSizeList(generics.ListCreateAPIView):
-    queryset = ProductSize.objects.all()
-    serializer_class = ProductSizeSerializer
-
-    def list(self, request):
-        try:
-            queryset = self.get_queryset()
-            serializer = ProductSizeSerializer(queryset, many=True)
+            serializer = BagWightUnitSerializer(queryset, many=True)
             return Response({"status": 1, "data": serializer.data})
         except:
             return Response({"status": 0})
@@ -121,18 +103,6 @@ def customer_order(request):
                 if 'state_code' in order and order['state_code']:
                     customer_order.state_code = order['state_code']
 
-                if 'consignee_name' in order and order['consignee_name']:
-                    customer_order.consignee_name = order['consignee_name']
-
-                if 'consignee_address' in order and order['consignee_address']:
-                    customer_order.consignee_address = order['consignee_address']
-
-                if 'consignee_pan' in order and order['consignee_pan']:
-                    customer_order.consignee_pan = order['consignee_pan']
-
-                if 'consignee_gst' in order and order['consignee_gst']:
-                    customer_order.consignee_gst = order['consignee_gst']
-
                 if 'order_number' in order and order['order_number']:
                     customer_order.order_number = order['order_number']
 
@@ -141,18 +111,17 @@ def customer_order(request):
                 total = 0
                 for product in products:
                     p = OrderProducts(product=Product.objects.get(pk=product['product']),
-                                      product_size=ProductSize.objects.get(pk=product['size']),
-                                      unit=Unit.objects.get(pk=product['unit']),
-                                      weight=product['weight'],
+                                      no_of_bag=product['size'],
+                                      bag_wight_unit=BagWightUnit.objects.get(pk=product['unit']),
                                       rate=product['rate'], customer_order=customer_order)
-                    total += p.weight * p.rate
+                    total += (p.bag_wight_unit.wight * p.no_of_bag) * p.rate
                     p.save()
 
                 customer_order.total = total
 
                 customer_order.save()
 
-            except(User.DoesNotExist, Product.DoesNotExist, ProductSize.DoesNotExist, Unit.DoesNotExist):
+            except(User.DoesNotExist, Product.DoesNotExist, BagWightUnit.DoesNotExist):
                 return Response({"status": 0, "result": "Data Does not exit"})
 
             return Response({"status": 1, "result": "Added data"})

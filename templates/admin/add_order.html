@@ -83,7 +83,7 @@
             $scope.delivery_date = null;
 
             $scope.orderProducts = [];
-            var product = {"product": null, "unit": null, "size": null, "weight": null, "rate": null};
+            var product = {"product": null, "unit": null, "size": null, "rate": null};
             $scope.orderProducts.push(product);
 
             $scope.setDeliveryDate = function (date) {
@@ -93,7 +93,7 @@
 
             $scope.addProductOrder = function () {
                 console.log("addProductOrder call");
-                var product = {"product": null, "unit": null, "size": null, "weight": null, "rate": null};
+                var product = {"product": null, "unit": null, "size": null, "rate": null};
                 $scope.orderProducts.push(product);
             };
 
@@ -181,6 +181,12 @@
             };
         });
 
+        app.filter('gstName', function () {
+            return function (item) {
+                return 'CGST : '+ item.setting_cgst + '%, SGDT : ' + item.setting_sgst + '%, IGST : ' + item.setting_igst + '%';
+            };
+        });
+
     </script>
 
 {% endblock %}
@@ -239,8 +245,8 @@
             <div class="form-group">
                 <label for="settinggst">Select GST</label>
                 <select class="form-control" ng-model="order.settingGst" id="settinggst"
-                        ng-options="item.id as item.setting_cgst for item in settingGst" required>
-                    <option value=""> Select GST *</option>
+                        ng-options="item.id as (item | gstName) for item in settingGst" required>
+                    <option value=""> Select GST for this order *</option>
                 </select>
             </div>
 
@@ -253,22 +259,15 @@
                     </select>
                 </div>
                 <div class="form-group col-lg-2">
-                    <label for="inputSize">Product Size</label>
-                    <select id="inputSize" required class="form-control" ng-model="p.size"
-                            ng-options="item.id as item.size for item in prodtc_sizes">
-                        <option value=""> Select product size *</option>
-                    </select>
-                </div>
-                <div class="form-group col-lg-2">
-                    <label for="weight">Weight</label>
-                    <input type="number" required class="form-control" id="weight" placeholder="10.00"
-                           ng-model="p.weight" step="0.01">
+                    <label for="inputSize">NO.Of Bag,Box,Karton</label>
+                    <input type="number" required class="form-control" id="inputSize" placeholder="10"
+                           ng-model="p.size" step="1">
                 </div>
                 <div class="form-group col-lg-2">
                     <label for="unit">Unit</label>
                     <select class="form-control" required id="unit" ng-model="p.unit"
-                            ng-options="item.id as item.name for item in units">
-                        <option value=""> Select unit *</option>
+                            ng-options="item.id as item.display_name for item in units">
+                        <option value=""> Select Bag unit with wight *</option>
                     </select>
                 </div>
                 <div class="form-group col-lg-2">
@@ -307,27 +306,6 @@
             <div class="form-group">
                 <label for="exampleFormControlInputvn">Vehicle Number</label>
                 <input type="text" class="form-control" ng-model="order.vehicle_number" id="vehicle_number" placeholder="GJ06 JP 1212">
-            </div>
-
-            <div class="form-group">
-                <label for="exampleFormControlInputcn">Consignee Name</label>
-                <input type="text" class="form-control" ng-model="order.consignee_name" id="consignee_name" placeholder="Optional">
-            </div>
-
-            <div class="form-group">
-                <label for="exampleFormControlInputca">Consignee Address</label>
-                <textarea class="form-control" ng-model="order.consignee_address" id="consignee_address" rows="3"
-                          placeholder="Optional"> </textarea>
-            </div>
-
-            <div class="form-group">
-                <label for="exampleFormControlInputcn">Consignee PAN CARD number</label>
-                <input type="text" class="form-control" ng-model="order.consignee_pan" id="consignee_pan" placeholder="Optional">
-            </div>
-
-            <div class="form-group">
-                <label for="exampleFormControlInputcn">Consignee GST number</label>
-                <input type="text" class="form-control" ng-model="order.consignee_gst" id="consignee_gst" placeholder="Optional">
             </div>
 
             <div class="button_bg_custom">

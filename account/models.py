@@ -4,6 +4,7 @@ from django.db import models
 from django.contrib.auth.models import User
 
 # Create your models here.
+from django.utils.encoding import smart_str
 
 
 class Account(models.Model):
@@ -35,7 +36,10 @@ class Account(models.Model):
     is_favourite = models.BooleanField(default=False, help_text='Used for add users as favourite.')
 
     def __unicode__(self):
-        return "{}".format(self.full_name)
+        return "{}".format(self.full_name).encode('ascii', 'replace')
+
+    def __str__(self):
+        return smart_str("{}".format(self.full_name).encode('ascii', 'replace'))
 
     @property
     def get_full_name(self):
@@ -58,6 +62,9 @@ class SettingAccount(models.Model):
     def __unicode__(self):
         return str(self.discount).encode('ascii', 'replace')
 
+    def __str__(self):
+        return smart_str(str(self.discount).encode('ascii', 'replace'))
+
 
 class SettingGST(models.Model):
     setting_cgst = models.FloatField(max_length=3, default=0, help_text='CGST IN PERCENTAGE (0 to 100).')
@@ -67,11 +74,18 @@ class SettingGST(models.Model):
     def __unicode__(self):
         return "CGST:{}, SGST:{}, IGST:{}".format(self.setting_cgst, self.setting_sgst, self.setting_igst).encode('ascii', 'replace')
 
+    def __str__(self):
+        return smart_str("CGST:{}, SGST:{}, IGST:{}".format(self.setting_cgst, self.setting_sgst, self.setting_igst).encode(
+            'ascii', 'replace'))
+
 
 class TermsConditions(models.Model):
     term_condition = models.CharField(max_length=400, blank=True, help_text='Term & Condition')
 
     def __unicode__(self):
         return str(self.term_condition).encode('ascii', 'replace')
+
+    def __str__(self):
+        return smart_str(str(self.term_condition).encode('ascii', 'replace'))
 
 
