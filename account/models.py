@@ -18,8 +18,7 @@ class Account(models.Model):
         (QUESTION_PET, 'What is the name of your pet?'),
         (QUESTION_SINGER, 'Who is your favorite singer?'),
     )
-    first_name = models.CharField(max_length=300, blank=False, null=False)
-    last_name = models.CharField(max_length=100, blank=True, null=True)
+    full_name = models.CharField(max_length=300, blank=False, null=False)
     email = models.EmailField(max_length=254, blank=True, null=True)
     mobile_number = models.CharField(max_length=12, blank=False, null=False)
     other_mobile_number = models.CharField(max_length=12, blank=False, null=False)
@@ -36,11 +35,11 @@ class Account(models.Model):
     is_favourite = models.BooleanField(default=False, help_text='Used for add users as favourite.')
 
     def __unicode__(self):
-        return "{} {}".format(self.first_name, self.last_name)
+        return "{}".format(self.full_name)
 
     @property
     def get_full_name(self):
-        return "{} {}".format(self.first_name, self.last_name).encode('ascii', 'replace')
+        return "{}".format(self.full_name).encode('ascii', 'replace')
 
 
 class SettingAccount(models.Model):

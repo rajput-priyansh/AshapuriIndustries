@@ -10,6 +10,7 @@ from rest_framework import generics, permissions
 from .serializers import *
 from django.shortcuts import get_object_or_404
 from account.models import SettingAccount, Account
+from django.contrib.auth.models import User
 
 
 def invoice(request, order_id, invoice_type):
@@ -91,7 +92,7 @@ def customer_order(request):
                 customer_order = CustomerOrder()
 
                 customer_order.user = Account.objects.get(pk=order['user'])
-                customer_order.settingGST = SettingGST.objects.get(pk=order['settingGST'])
+                customer_order.settingGST = SettingGST.objects.get(pk=order['settingGst'])
 
                 if 'description' in order and order['description']:
                     customer_order.description = order['description']

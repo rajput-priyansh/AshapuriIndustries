@@ -27,7 +27,7 @@ class ChoiceOrderProductInline(admin.TabularInline):
 class CustomerOrderAdmin(admin.ModelAdmin):
     empty_value_display = '-empty-'
     # filter_horizontal = ['order_products']
-    list_display = ['user', 'original_invoice', 'duplicate_invoice', 'triplicate_invoice', 'order_number',
+    list_display = ['customer_user', 'original_invoice', 'duplicate_invoice', 'triplicate_invoice', 'order_number',
                     'shipping_address', 'total', 'cgst', 'sgst', 'igst', 'grand_total', 'creation_date',
                     'delivery_date', 'all_order_product']
     list_filter = [
@@ -44,6 +44,9 @@ class CustomerOrderAdmin(admin.ModelAdmin):
               'consignee_pan', 'consignee_gst', 'settingGST']
 
     inlines = [ChoiceOrderProductInline]
+
+    def customer_user(self, obj):
+        return "{}".format(obj.user.full_name)
 
     def original_invoice(self, obj):
         return '<a href="%s/%s/%s" target="_blank">%s</a>' % (

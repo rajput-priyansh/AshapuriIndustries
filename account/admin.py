@@ -13,8 +13,7 @@ class AccountInline(admin.StackedInline):
 
 class AccountAdmin(admin.ModelAdmin):
     list_display = [
-        'first_name',
-        'last_name',
+        'full_name',
         'email',
         'mobile_number',
         'creation_date',
@@ -30,12 +29,12 @@ class AccountAdmin(admin.ModelAdmin):
         'user__last_name',
     ]
 
-    fields = ['first_name', 'last_name', 'email', 'mobile_number', 'image', 'address', 'pan_number', 'gst_number',
+    fields = ['full_name', 'email', 'mobile_number', 'image', 'address', 'pan_number', 'gst_number',
               'is_approved', 'is_active', 'is_favourite', ]
 
 
 class SettingAccountAdmin(admin.ModelAdmin):
-    list_display = ['discount', 'setting_cgst', 'setting_sgst', 'setting_igst', ]
+    list_display = ['gst_number', 'discount', ]
 
 
 class SettingGSTAdmin(admin.ModelAdmin):

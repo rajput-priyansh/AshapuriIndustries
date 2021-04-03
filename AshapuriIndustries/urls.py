@@ -13,9 +13,26 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+from django.conf.urls import url, include
 from django.contrib import admin
-from django.urls import path
+from django.views.generic import TemplateView
+
+from AshapuriIndustries import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    url(r'^accounts/', include('account.urls')),
+    url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    url(r'^order/', include('order.urls')),
+    url(r'^admin/', admin.site.urls),
+    url(r'^admin/add-new-order/$', TemplateView.as_view(template_name='admin/add_order.html'), name='add-new-order'),
+    url(r'^admin/add-new-purchase/$', TemplateView.as_view(template_name='admin/add_purchase.html'), name='add-new-purchase'),
+    url(r'^admin/customer-order-list/$', TemplateView.as_view(template_name='admin/customer_order_list.html'), name='customer-order-list'),
 ]
+
+urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+admin.site.site_header = "Ashapuri Industries Admin"
+admin.site.site_title = "Ashapuri Industries Admin Portal"
+admin.site.index_title = "Welcome to Ashapuri Industries Portal"

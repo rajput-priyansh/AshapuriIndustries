@@ -126,8 +126,7 @@
 
             $scope.search = function (item) {
                 return (!$scope.query ||
-                    (item.user.first_name.toLowerCase().indexOf($scope.query.toLowerCase()) != -1) ||
-                    (item.user.last_name.toLowerCase().indexOf($scope.query.toLowerCase()) != -1) ||
+                    (item.user.full_name.toLowerCase().indexOf($scope.query.toLowerCase()) != -1) ||
                     (item.user.profile.mobile_number.toLowerCase().indexOf($scope.query.toLowerCase()) != -1) ||
                     (item.user.email.toLowerCase().indexOf($scope.query.toLowerCase()) != -1))
             };
@@ -166,8 +165,7 @@
                 <thead class="thead-light">
                 <tr>
                     <th>#</th>
-                    <th>FIRST NAME</th>
-                    <th>LAST NAME</th>
+                    <th>FULL NAME</th>
                     <th>EMAIL</th>
                     <th>Mobile NUMBER</th>
                     <th>OrderID</th>
@@ -177,8 +175,7 @@
                 <tbody>
                 <tr ng-repeat="order in filtered_customer_orders | filter: search | orderBy : '-creation_date'">
                     <td>{[{$index + 1}]}</td>
-                    <td>{[{order.user.first_name}]}</td>
-                    <td>{[{order.user.last_name}]}</td>
+                    <td>{[{order.user.full_name}]}</td>
                     <td>{[{order.user.email}]}</td>
                     <td>{[{order.user.profile.mobile_number}]}</td>
                     <td>{[{order.id}]}</td>

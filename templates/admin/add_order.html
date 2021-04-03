@@ -77,8 +77,8 @@
 
         app.controller('myCtrl', function ($scope, $http, $location, $window) {
 
-            //$scope.API_URL = "http://127.0.0.1:8000";
-            $scope.API_URL = "https://priyanshrajput.pythonanywhere.com";
+            $scope.API_URL = "http://127.0.0.1:8000";
+            //$scope.API_URL = "https://priyanshrajput.pythonanywhere.com";
 
             $scope.delivery_date = null;
 
@@ -177,7 +177,7 @@
 
         app.filter('customerName', function () {
             return function (item) {
-                return item.first_name + ' ' + item.last_name + ' (' + item.email + ')' + ' (' + item.mobile_number + ')';
+                return item.full_name + ' (' + item.email + ')' + ' (' + item.mobile_number + ')';
             };
         });
 
@@ -237,9 +237,9 @@
             </div>
 
             <div class="form-group">
-                <label for="customer">Select GST</label>
-                <select class="form-control" ng-model="order.settingGst" id="customer"
-                        ng-options="item.id as (item | item) for item in settingGst" required>
+                <label for="settinggst">Select GST</label>
+                <select class="form-control" ng-model="order.settingGst" id="settinggst"
+                        ng-options="item.id as item.setting_cgst for item in settingGst" required>
                     <option value=""> Select GST *</option>
                 </select>
             </div>

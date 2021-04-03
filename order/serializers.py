@@ -131,7 +131,8 @@ class CustomerOrderSerializer(serializers.ModelSerializer):
     def get_order_total(self, obj):
         order_products = OrderProducts.objects.filter(customer_order=obj)
         total = 0
-        setting_account = obj.settingGST
+        setting_account = SettingAccount.objects.last()
+        setting_Gst = obj.settingGST
         for product in order_products:
             total += product.weight * product.rate
 
@@ -139,15 +140,15 @@ class CustomerOrderSerializer(serializers.ModelSerializer):
         cgst = 0
         sgst = 0
         igst = 0
-        if setting_account:
-            if setting_account.setting_cgst and setting_account.setting_cgst > 0:
-                cgst = (setting_account.setting_cgst * total) / 100
+        if setting_Gst:
+            if setting_Gst.setting_cgst and setting_Gst.setting_cgst > 0:
+                cgst = (setting_Gst.setting_cgst * total) / 100
 
-            if setting_account.setting_sgst and setting_account.setting_sgst > 0:
-                sgst = (setting_account.setting_sgst * total) / 100
+            if setting_Gst.setting_sgst and setting_Gst.setting_sgst > 0:
+                sgst = (setting_Gst.setting_sgst * total) / 100
 
-            if setting_account.setting_igst and setting_account.setting_igst > 0:
-                igst = (setting_account.setting_igst * total) / 100
+            if setting_Gst.setting_igst and setting_Gst.setting_igst > 0:
+                igst = (setting_Gst.setting_igst * total) / 100
 
         net_amt = total + cgst + sgst + igst
 

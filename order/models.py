@@ -17,7 +17,7 @@ class Unit(models.Model):
 
 
 class ProductSize(models.Model):
-    size = models.CharField(max_length=50, null=False, blank=False, help_text="Product size e.i 8 * 10")
+    size = models.CharField(max_length=50, null=False, blank=False, help_text="Product size e.i Bag(KG)")
     description = models.TextField(null=True, blank=True, help_text="Write about the size")
 
     def __unicode__(self):
@@ -72,8 +72,8 @@ class CustomerOrder(models.Model):
     discount = models.FloatField(default=0)
     net_total = models.FloatField(default=0)
     grand_total = models.FloatField(default=0)
-    transportation_mode = models.CharField(max_length=50, help_text="Transportation Mode", default="A")
-    vehicle_number = models.CharField(max_length=50, help_text="Vehicle Number", default="A")
+    transportation_mode = models.CharField(max_length=50, help_text="Transportation Mode", default="")
+    vehicle_number = models.CharField(max_length=50, help_text="Vehicle Number", default="")
     consignee_name = models.CharField(max_length=250, help_text="Consignee Full Name", blank=True, null=True)
     consignee_address = models.CharField(max_length=350, help_text="Consignee Full Address", blank=True, null=True)
     consignee_pan = models.CharField(max_length=50, help_text="Consignee PAN CARD number", blank=True, null=True)
@@ -83,7 +83,7 @@ class CustomerOrder(models.Model):
     settingGST = models.ForeignKey(SettingGST, on_delete=models.CASCADE)
 
     def __unicode__(self):
-        return "{} {}".format(self.user.first_name, self.user.last_name).encode('ascii', 'replace')
+        return "{}".format(self.user.full_name).encode('ascii', 'replace')
 
     def all_order_product(self):
         order_products = OrderProducts.objects.filter(customer_order=self)
@@ -117,6 +117,7 @@ def update_tax(sender, instance, **kwargs):
 
     total = instance.customer_order.total
     setting_account = SettingAccount.objects.last()
+    setting_GST = instance.customer_order.settingGST
 
     total += instance.weight * instance.rate
 
@@ -124,15 +125,15 @@ def update_tax(sender, instance, **kwargs):
     cgst = 0
     sgst = 0
     igst = 0
-    if setting_account:
-        if setting_account.setting_cgst and setting_account.setting_cgst > 0:
-            cgst = (setting_account.setting_cgst * total) / 100
+    if setting_GST:
+        if setting_GST.setting_cgst and setting_GST.setting_cgst > 0:
+            cgst = (setting_GST.setting_cgst * total) / 100
 
-        if setting_account.setting_sgst and setting_account.setting_sgst > 0:
-            sgst = (setting_account.setting_sgst * total) / 100
+        if setting_GST.setting_sgst and setting_GST.setting_sgst > 0:
+            sgst = (setting_GST.setting_sgst * total) / 100
 
-        if setting_account.setting_igst and setting_account.setting_igst > 0:
-            igst = (setting_account.setting_igst * total) / 100
+        if setting_GST.setting_igst and setting_GST.setting_igst > 0:
+            igst = (setting_GST.setting_igst * total) / 100
 
     net_amt = total + cgst + sgst + igst
 

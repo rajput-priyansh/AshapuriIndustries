@@ -2,8 +2,8 @@ from django.contrib.auth import authenticate
 from django.db.models import Q
 
 from rest_framework import serializers
-
 from .models import *
+from django.contrib.auth.models import User
 
 
 class LoginSerializer(serializers.Serializer):
@@ -45,7 +45,7 @@ class LoginSerializer(serializers.Serializer):
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Account
-        fields = ['id', 'email', 'first_name', 'last_name', 'mobile_number', 'is_approved', 'address',
+        fields = ['id', 'email', 'full_name', 'mobile_number', 'is_approved', 'address',
                   'city', 'pan_number', 'gst_number',
                   'is_favourite']
 
