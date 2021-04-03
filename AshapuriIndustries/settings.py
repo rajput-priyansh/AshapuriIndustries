@@ -130,5 +130,5 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-DOMAIN_NAME = 'http://localhost:8000'
-# DOMAIN_NAME = 'http://priyanshrajput.pythonanywhere.com'
+# DOMAIN_NAME = 'http://localhost:8000'
+DOMAIN_NAME = 'http://ashapuriindustries2.pythonanywhere.com'
