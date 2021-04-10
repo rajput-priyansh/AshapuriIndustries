@@ -11,7 +11,7 @@ from django.dispatch import receiver
 
 class BagWightUnit(models.Model):
     display_name = models.CharField(max_length=50, null=False, blank=False, help_text="Unit name e.i. (50KG), (25GM)")
-    unit = models.CharField(max_length=50,  default="", help_text="Unit e.i. KG, GM")
+    unit = models.CharField(max_length=50, default="", help_text="Unit e.i. KG, GM")
     wight = models.FloatField(default=0, help_text="Unit Wight e.i. 50, 25")
     description = models.TextField(null=True, blank=True, help_text="Write about the unit")
 
@@ -56,14 +56,9 @@ class CustomerOrder(models.Model):
     user = models.ForeignKey(Account, related_name='customer')
     creation_date = models.DateTimeField('date created', auto_now_add=True)
     modified_date = models.DateTimeField('date last modified', auto_now=True)
-    delivery_date = models.DateTimeField('date delivery', blank=True, default=timezone.now)
     status = models.IntegerField(choices=ORDER_STATUS_CHOICES, default=1)
     invoice_type = models.IntegerField(choices=INVOICE_CHOICES, default=1)
     order_products = models.ManyToManyField(Product, through='OrderProducts')
-    description = models.TextField(null=True, blank=True, help_text="Extra details about the order")
-    shipping_address = models.TextField(null=False, blank=False, default='Vadodara',
-                                        help_text="Destination point where the items is to be delivered",
-                                        verbose_name="Place Of Supply")
     state = models.CharField(max_length=50, help_text="State Name", default="Gujrat")
     state_code = models.CharField(max_length=10, help_text="State Code", default="24")
     total = models.FloatField(default=0)
@@ -75,9 +70,9 @@ class CustomerOrder(models.Model):
     grand_total = models.FloatField(default=0)
     transportation_mode = models.CharField(max_length=50, help_text="Transportation Mode", default="")
     vehicle_number = models.CharField(max_length=50, help_text="Vehicle Number", default="")
-    order_number = models.CharField(max_length=100, help_text="Order number", blank=True, null=True)
+    invoice_number = models.CharField(max_length=100, help_text="Invoice number", blank=True, null=True)
     invoice_date = models.DateTimeField('invoice date', blank=True, default=timezone.now)
-    settingGST = models.ForeignKey(SettingGST, on_delete=models.CASCADE)
+    packaging_total = models.FloatField(default=0, help_text="Packaging charge")
 
     def __unicode__(self):
         return "{}".format(self.user.full_name).encode('ascii', 'replace')
@@ -90,7 +85,8 @@ class CustomerOrder(models.Model):
         if not order_products:
             return ""
         return format_html('<span>{}</span>', "".join(['({} - {} - {}{})'.format(
-            op.product.product_name, op.no_of_bag, (op.no_of_bag * op.bag_wight_unit.wight), op.bag_wight_unit.display_name) for op in order_products]))
+            op.product.product_name, op.no_of_bag, (op.no_of_bag * op.bag_wight_unit.wight),
+            op.bag_wight_unit.display_name) for op in order_products]))
 
 
 class OrderProducts(models.Model):
@@ -102,6 +98,7 @@ class OrderProducts(models.Model):
     rate = models.FloatField(default=0)
     creation_date = models.DateTimeField('date created', auto_now_add=True)
     modified_date = models.DateTimeField('date last modified', auto_now=True)
+    settingGST = models.ForeignKey(SettingGST, on_delete=models.CASCADE, default=1)
 
     def __unicode__(self):
         return 'PRODUCT {} - {} {}'.format(self.product.product_name,
@@ -110,8 +107,8 @@ class OrderProducts(models.Model):
 
     def __str__(self):
         return smart_str('PRODUCT {} - {} {}'.format(self.product.product_name,
-                                           (self.bag_wight_unit.wight * self.no_of_bag),
-                                           self.bag_wight_unit.display_name))
+                                                     (self.bag_wight_unit.wight * self.no_of_bag),
+                                                     self.bag_wight_unit.display_name))
 
 
 @receiver(post_save, sender=OrderProducts, dispatch_uid="update_tax_count")
@@ -123,7 +120,8 @@ def update_tax(sender, instance, **kwargs):
 
     total = instance.customer_order.total
     setting_account = SettingAccount.objects.last()
-    setting_GST = instance.customer_order.settingGST
+    # TODO NEED TO CANGE the Logic for Count GST
+    setting_gst = instance.settingGST
 
     total += (instance.bag_wight_unit.wight * instance.no_of_bag) * instance.rate
 
@@ -131,26 +129,27 @@ def update_tax(sender, instance, **kwargs):
     cgst = 0
     sgst = 0
     igst = 0
-    if setting_GST:
-        if setting_GST.setting_cgst and setting_GST.setting_cgst > 0:
-            cgst = (setting_GST.setting_cgst * total) / 100
+    if setting_gst:
+        if setting_gst.setting_cgst and setting_gst.setting_cgst > 0:
+            cgst = (setting_gst.setting_cgst * total) / 100
 
-        if setting_GST.setting_sgst and setting_GST.setting_sgst > 0:
-            sgst = (setting_GST.setting_sgst * total) / 100
+        if setting_gst.setting_sgst and setting_gst.setting_sgst > 0:
+            sgst = (setting_gst.setting_sgst * total) / 100
 
-        if setting_GST.setting_igst and setting_GST.setting_igst > 0:
-            igst = (setting_GST.setting_igst * total) / 100
+        if setting_gst.setting_igst and setting_gst.setting_igst > 0:
+            igst = (setting_gst.setting_igst * total) / 100
 
-    net_amt = total + cgst + sgst + igst
+    instance.customer_order.cgst = (instance.customer_order.cgst if instance.customer_order.cgst else 0 + cgst)
+    instance.customer_order.sgst = (instance.customer_order.sgst if instance.customer_order.sgst else 0 + sgst)
+    instance.customer_order.igst = (instance.customer_order.igst if instance.customer_order.igst else 0 + igst)
+
+    net_amt = total + instance.customer_order.cgst + instance.customer_order.sgst + instance.customer_order.igst + instance.customer_order.packaging_total
 
     if setting_account and setting_account.discount and setting_account.discount > 0:
         discount = (setting_account.discount * net_amt) / 100
 
     grand_total = net_amt - discount
 
-    instance.customer_order.cgst = cgst
-    instance.customer_order.sgst = sgst
-    instance.customer_order.igst = igst
     instance.customer_order.discount = discount + instance.customer_order.discount
     instance.customer_order.net_total = net_amt
     instance.customer_order.grand_total = grand_total
@@ -158,5 +157,3 @@ def update_tax(sender, instance, **kwargs):
 
     # make changes to model instance
     instance.customer_order.save()
-    # instance.product.stock -= instance.amount
-    # instance.product.save()

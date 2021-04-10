@@ -20,21 +20,62 @@ class BagWightUnitSerializer(serializers.ModelSerializer):
         fields = ['id', 'display_name', 'wight', 'unit', 'description']
 
 
+class OrderProductGst:
+    def __init__(self, cgst, sgst, igst):
+        self.cgst = cgst
+        self.sgst = sgst
+        self.igst = igst
+
+
+class OrderProductGstSerializer(serializers.Serializer):
+    def update(self, instance, validated_data):
+        pass
+
+    def create(self, validated_data):
+        pass
+
+    cgst = serializers.CharField()
+    sgst = serializers.CharField()
+    igst = serializers.CharField()
+
+
 class OrderProductsSerializer(serializers.ModelSerializer):
     product = ProductSerializer()
     bag_wight_unit = BagWightUnitSerializer()
     amount = serializers.SerializerMethodField(read_only=True)
     weight = serializers.SerializerMethodField(read_only=True)
+    order_product_gst = serializers.SerializerMethodField(read_only=True)
+    settingGST = SettingGSTSerializer()
 
     class Meta:
         model = OrderProducts
-        fields = ['id', 'weight', 'rate', 'product', 'no_of_bag', 'bag_wight_unit', 'amount']
+        fields = ['id', 'weight', 'rate', 'product', 'no_of_bag', 'bag_wight_unit', 'amount', 'settingGST', 'order_product_gst']
 
     def get_amount(self, p):
         return (p.no_of_bag * p.bag_wight_unit.wight) * p.rate
 
     def get_weight(self, p):
         return p.no_of_bag * p.bag_wight_unit.wight
+
+    def get_order_product_gst(self, p):
+        cgst = 0
+        sgst = 0
+        igst = 0
+
+        a_total = (p.bag_wight_unit.wight * p.no_of_bag) * p.rate
+
+        if p.settingGST:
+            if p.settingGST.setting_cgst and p.settingGST.setting_cgst > 0:
+                cgst = (p.settingGST.setting_cgst * a_total) / 100
+
+            if p.settingGST.setting_sgst and p.settingGST.setting_sgst > 0:
+                sgst = (p.settingGST.setting_sgst * a_total) / 100
+
+            if p.settingGST.setting_igst and p.settingGST.setting_igst > 0:
+                igst = (p.settingGST.setting_igst * a_total) / 100
+
+        order_product = OrderProductGst(cgst=cgst, sgst=sgst, igst=igst)
+        return OrderProductGstSerializer(order_product, many=False).data
 
 
 class OrderTotal:
@@ -52,6 +93,12 @@ class OrderTotal:
 
 
 class OrderTotalSerializer(serializers.Serializer):
+    def update(self, instance, validated_data):
+        pass
+
+    def create(self, validated_data):
+        pass
+
     total = serializers.CharField()
     cgst = serializers.CharField()
     sgst = serializers.CharField()
@@ -71,18 +118,16 @@ class CustomerOrderSerializer(serializers.ModelSerializer):
     terms_conditions = serializers.SerializerMethodField(read_only=True)
     str_status = serializers.SerializerMethodField(read_only=True)
     str_creation_date = serializers.SerializerMethodField(read_only=True)
-    str_delivery_date = serializers.SerializerMethodField(read_only=True)
     str_invoice_date = serializers.SerializerMethodField(read_only=True)
     order_total = serializers.SerializerMethodField(read_only=True)
     user = ProfileSerializer()
-    settingGST = SettingGSTSerializer()
 
     class Meta:
         model = CustomerOrder
-        fields = ['id', 'order_number', 'delivery_date', 'status', 'description', 'shipping_address', 'products',
-                  'creation_date', 'user', 'settingGST', 'host', 'setting_account', 'transportation_mode',
+        fields = ['id', 'invoice_number', 'status', 'products',
+                  'creation_date', 'user', 'host', 'setting_account', 'transportation_mode',
                   'vehicle_number', 'str_status', 'state_code', 'state', 'terms_conditions', 'str_creation_date',
-                  'str_delivery_date', 'invoice_type', 'order_total', 'str_invoice_date']
+                  'invoice_type', 'order_total', 'str_invoice_date', 'packaging_total']
 
     def get_products(self, obj):
         order_products = OrderProducts.objects.filter(customer_order=obj)
@@ -111,9 +156,6 @@ class CustomerOrderSerializer(serializers.ModelSerializer):
     def get_str_creation_date(self, obj):
         return obj.creation_date.strftime("%d-%m-%Y")
 
-    def get_str_delivery_date(self, obj):
-        return obj.delivery_date.strftime("%d-%m-%Y")
-
     def get_str_invoice_date(self, obj):
         return obj.invoice_date.strftime("%d-%m-%Y")
 
@@ -129,37 +171,40 @@ class CustomerOrderSerializer(serializers.ModelSerializer):
         order_products = OrderProducts.objects.filter(customer_order=obj)
         total = 0
         setting_account = SettingAccount.objects.last()
-        setting_Gst = obj.settingGST
-        for product in order_products:
-            total += (product.bag_wight_unit.wight * product.no_of_bag) * product.rate
 
         discount = 0
         cgst = 0
         sgst = 0
         igst = 0
-        if setting_Gst:
-            if setting_Gst.setting_cgst and setting_Gst.setting_cgst > 0:
-                cgst = (setting_Gst.setting_cgst * total) / 100
 
-            if setting_Gst.setting_sgst and setting_Gst.setting_sgst > 0:
-                sgst = (setting_Gst.setting_sgst * total) / 100
+        for product in order_products:
+            total += (product.bag_wight_unit.wight * product.no_of_bag) * product.rate
+            a_total = (product.bag_wight_unit.wight * product.no_of_bag) * product.rate
 
-            if setting_Gst.setting_igst and setting_Gst.setting_igst > 0:
-                igst = (setting_Gst.setting_igst * total) / 100
+            if product.settingGST:
+                if product.settingGST.setting_cgst and product.settingGST.setting_cgst > 0:
+                    cgst += (product.settingGST.setting_cgst * a_total) / 100
 
-        net_amt = total + cgst + sgst + igst
+                if product.settingGST.setting_sgst and product.settingGST.setting_sgst > 0:
+                    sgst += (product.settingGST.setting_sgst * a_total) / 100
+
+                if product.settingGST.setting_igst and product.settingGST.setting_igst > 0:
+                    igst += (product.settingGST.setting_igst * a_total) / 100
+
+        net_amt = round((total + cgst + sgst + igst + obj.packaging_total), 2)
 
         if setting_account and setting_account.discount and setting_account.discount > 0:
             discount = (setting_account.discount * net_amt) / 100
 
-        grand_total = round(net_amt - (discount + obj.discount))
+        order_total_rounded, whole = math.modf(net_amt)
+
+        grand_total = round((net_amt - (discount + obj.discount)), 2) - order_total_rounded
         str_total_in_words = (num2words(grand_total, to='cardinal', lang='en_IN').upper()).replace("AND", "").replace(
             ",", "").replace("-", "")
 
-        total_tax = cgst + sgst + igst
+        total_tax = round((cgst + sgst + igst), 2)
         str_order_total_rounded = "0.0"
 
-        order_total_rounded, whole = math.modf(net_amt)
         if order_total_rounded < 0.5:
             str_order_total_rounded = "-0." + str(str(net_amt).split(".")[1])
         else:

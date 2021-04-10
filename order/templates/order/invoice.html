@@ -43,6 +43,13 @@
             color: #333;
         }
 
+        .invoice_property {
+            font-size: 14px;
+            font-weight: 100;
+            line-height: 1.5;
+            color: #333;
+        }
+
         .title span {
             color: #333;
         }
@@ -95,9 +102,9 @@
 <div class='wrapper'>
     <div class="header">
         <div class="head" style="text-align:center;">
-            <img class="square" src="/home/priyanshRajput/shreejipackaging-WEB/static/order/images/icon.jpg" alt="logo"
+            <img class="square" src="/home/ashapuriindustries2/AshapuriIndustries/AshapuriIndustries/static/order/images/ashashapuri-logo.png" alt="logo"
                  style="display: inline-block;vertical-align: middle;line-height: 58px;">
-            &nbsp;<p class='title' style="display: inline-block;"> ASHAPURI INDUSTRIES</p>
+            &nbsp;<!--<p class='title' style="display: inline-block;"> ASHAPURI INDUSTRIES</p>-->
             <div style="display: block;clear: both;"></div>
         </div>
         <p class="address">
@@ -128,7 +135,7 @@
                 <td style="width: 40%; text-align: left;">
                     <table style="width: 100%;">
                         <tr>
-                            <td class="sub_title" style="width: 50%;"><b>INV NO : {{ order_number }}</b></td>
+                            <td class="sub_title" style="width: 50%;"><b>INV NO : {{ invoice_number }}</b></td>
                             <td class="sub_title" style="width: 50%;"><b>DATE : {{ str_invoice_date }}</b></td>
                         </tr>
                     </table>
@@ -181,160 +188,148 @@
 <div class="full-height">
     <table class="order_item">
         <tr>
-            <th style="width:10%; background-color:#2E2E2E; color: #ffffff;">
+            <th style="width:5%; background-color:#2E2E2E; color: #ffffff;">
                 SR. No
             </th>
-            <th style="width:30%; background-color:#2E2E2E; color: #ffffff;">
+            <th style="width:25%; background-color:#2E2E2E; color: #ffffff;">
                 Description of Goods
             </th>
-            <th style="width:15%; background-color:#2E2E2E; color: #ffffff;">
+            <th style="width:8%; background-color:#2E2E2E; color: #ffffff;">
                 HSN/ACS
             </th>
-            <th style="width:10%; background-color:#2E2E2E; color: #ffffff;">
+            <th style="width:8.33%; background-color:#2E2E2E; color: #ffffff;">
                 Bag
             </th>
-            <th style="width:10%; background-color:#2E2E2E; color: #ffffff;">
+            <th style="width:8.33%; background-color:#2E2E2E; color: #ffffff;">
                 Qty
             </th>
-            <th style="width:10%; background-color:#2E2E2E; color: #ffffff;">
+            <th style="width:8.33%; background-color:#2E2E2E; color: #ffffff;">
                 Rate
             </th>
-            <th style="width:15%; background-color:#2E2E2E; color: #ffffff;">Total</th>
+            <th style="width:10%; background-color:#2E2E2E; color: #ffffff;">
+                CGST
+            </th>
+            <th style="width:10%; background-color:#2E2E2E; color: #ffffff;">
+                SGST
+            </th>
+            <th style="width:0%; background-color:#2E2E2E; color: #ffffff;">
+                IGST
+            </th>
+            <th style="width:12%; background-color:#2E2E2E; color: #ffffff;">Total</th>
         </tr>
         {% for product in products %}
-            <tr>
-                <td style="width:10%;">
+            <tr class="invoice_property">
+                <td style="width:5%;">
                     {{ forloop.counter }}
                 </td>
-                <td style="width:30%;">
+                <td style="width:25%;">
                     {{ product.product.product_name }} - {{ product.product.product_type }}
                 </td>
-                <td style="width:15%;">
+                <td style="width:8%;">
                     {% if product.product.hsn_number %} {{ product.product.hsn_number }} {% else %}
                         {{ " " }} {% endif %}
                 </td>
-                <td style="width:10%;">
+                <td style="width:8.33%;">
                     {{ product.no_of_bag }}({{ product.bag_wight_unit.display_name }})
                 </td>
-                <td style="width:10%;">
+                <td style="width:8.33%;">
                     {{ product.weight }}{{ product.bag_wight_unit.unit }}
                 </td>
-                <td style="width:10%;">
+                <td style="width:8.33%;">
                     {{ product.rate }}
                 </td>
-                <td style="width:15%;">{{ product.amount }}</td>
+                <td style="width:8.33%;">
+                    {{ product.order_product_gst.cgst }} ({{ product.settingGST.setting_cgst }}%)
+                </td>
+                <td style="width:8.33%;">
+                    {{ product.order_product_gst.sgst }} ({{ product.settingGST.setting_sgst }}%)
+                </td>
+                <td style="width:8.33%;">
+                    {{ product.order_product_gst.igst }} ({{ product.settingGST.setting_igst }}%)
+                </td>
+                <td style="width:12%;">{{ product.amount }}</td>
             </tr>
         {% endfor %}
         {% if products|length <= 9 %}
             <tr>
-                <td style="width:10%; border-top: 0; border-bottom: 0;">&nbsp;</td>
-                <td style="width:30%; border-top: 0; border-bottom: 0;">{{ " " }}</td>
-                <td style="width:15%; border-top: 0; border-bottom: 0;">{{ " " }}</td>
-                <td style="width:10%; border-top: 0; border-bottom: 0;">{{ " " }}</td>
-                <td style="width:10%; border-top: 0; border-bottom: 0;">{{ " " }}</td>
-                <td style="width:10%; border-top: 0; border-bottom: 0;">{{ " " }}</td>
-                <td style="width:15%; border-top: 0; border-bottom: 0;">{{ " " }}</td>
+                <td style="width:5%; border-top: 0; border-bottom: 0;">&nbsp;</td>
+                <td style="width:25%; border-top: 0; border-bottom: 0;">{{ " " }}</td>
+                <td style="width:8%; border-top: 0; border-bottom: 0;">{{ " " }}</td>
+                <td style="width:8.33%; border-top: 0; border-bottom: 0;">{{ " " }}</td>
+                <td style="width:8.33%; border-top: 0; border-bottom: 0;">{{ " " }}</td>
+                <td style="width:8.33%; border-top: 0; border-bottom: 0;">{{ " " }}</td>
+                <td style="width:8.33%; border-top: 0; border-bottom: 0;">{{ " " }}</td>
+                <td style="width:8.33%; border-top: 0; border-bottom: 0;">{{ " " }}</td>
+                <td style="width:8.33%; border-top: 0; border-bottom: 0;">{{ " " }}</td>
+                <td style="width:12%; border-top: 0; border-bottom: 0;">{{ " " }}</td>
             </tr>
             <tr>
-                <td style="width:10%; border-top: 0; border-bottom: 0;">&nbsp;</td>
-                <td style="width:30%; border-top: 0; border-bottom: 0;">{{ " " }}</td>
-                <td style="width:15%; border-top: 0; border-bottom: 0;">{{ " " }}</td>
-                <td style="width:10%; border-top: 0; border-bottom: 0;">{{ " " }}</td>
-                <td style="width:10%; border-top: 0; border-bottom: 0;">{{ " " }}</td>
-                <td style="width:10%; border-top: 0; border-bottom: 0;">{{ " " }}</td>
-                <td style="width:15%; border-top: 0; border-bottom: 0;">{{ " " }}</td>
+                <td style="width:5%; border-top: 0; border-bottom: 0;">&nbsp;</td>
+                <td style="width:25%; border-top: 0; border-bottom: 0;">{{ " " }}</td>
+                <td style="width:8%; border-top: 0; border-bottom: 0;">{{ " " }}</td>
+                <td style="width:8.33%; border-top: 0; border-bottom: 0;">{{ " " }}</td>
+                <td style="width:8.33%; border-top: 0; border-bottom: 0;">{{ " " }}</td>
+                <td style="width:8.33%; border-top: 0; border-bottom: 0;">{{ " " }}</td>
+                <td style="width:8.33%; border-top: 0; border-bottom: 0;">{{ " " }}</td>
+                <td style="width:8.33%; border-top: 0; border-bottom: 0;">{{ " " }}</td>
+                <td style="width:8.33%; border-top: 0; border-bottom: 0;">{{ " " }}</td>
+                <td style="width:12%; border-top: 0; border-bottom: 0;">{{ " " }}</td>
             </tr>
-            <tr >
-                <td style="width:10%;">&nbsp;</td>
-                <td style="width:30%;">{{ " " }}</td>
-                <td style="width:15%;">{{ " " }}</td>
-                <td style="width:10%;">{{ " " }}</td>
-                <td style="width:10%;">{{ " " }}</td>
-                <td style="width:10%;">{{ " " }}</td>
-                <td style="width:15%;">{{ " " }}</td>
+            <tr>
+                <td style="width:5%; border-top: 0; border-bottom: 0;">&nbsp;</td>
+                <td style="width:25%; border-top: 0; border-bottom: 0;">{{ " " }}</td>
+                <td style="width:8%; border-top: 0; border-bottom: 0;">{{ " " }}</td>
+                <td style="width:8.33%; border-top: 0; border-bottom: 0;">{{ " " }}</td>
+                <td style="width:8.33%; border-top: 0; border-bottom: 0;">{{ " " }}</td>
+                <td style="width:8.33%; border-top: 0; border-bottom: 0;">{{ " " }}</td>
+               <td style="width:8.33%; border-top: 0; border-bottom: 0;">{{ " " }}</td>
+                <td style="width:8.33%; border-top: 0; border-bottom: 0;">{{ " " }}</td>
+                <td style="width:8.33%; border-top: 0; border-bottom: 0;">{{ " " }}</td>
+                <td style="width:12%; border-top: 0; border-bottom: 0;">{{ " " }}</td>
             </tr>
-            <tr >
-                <td style="width:10%;">&nbsp;</td>
-                <td style="width:30%;">{{ " " }}</td>
-                <td style="width:15%;">{{ " " }}</td>
-                <td style="width:10%;">{{ " " }}</td>
-                <td style="width:10%;">{{ " " }}</td>
-                <td style="width:10%;">{{ " " }}</td>
-                <td style="width:15%;">{{ " " }}</td>
+            <tr>
+                <td style="width:5%; border-top: 0; border-bottom: 0;">&nbsp;</td>
+                <td style="width:25%; border-top: 0; border-bottom: 0;">{{ " " }}</td>
+                <td style="width:8%; border-top: 0; border-bottom: 0;">{{ " " }}</td>
+                <td style="width:8.33%; border-top: 0; border-bottom: 0;">{{ " " }}</td>
+                <td style="width:8.33%; border-top: 0; border-bottom: 0;">{{ " " }}</td>
+                <td style="width:8.33%; border-top: 0; border-bottom: 0;">{{ " " }}</td>
+               <td style="width:8.33%; border-top: 0; border-bottom: 0;">{{ " " }}</td>
+                <td style="width:8.33%; border-top: 0; border-bottom: 0;">{{ " " }}</td>
+                <td style="width:8.33%; border-top: 0; border-bottom: 0;">{{ " " }}</td>
+                <td style="width:12%; border-top: 0; border-bottom: 0;">{{ " " }}</td>
             </tr>
-            <tr >
-                <td style="width:10%;">&nbsp;</td>
-                <td style="width:30%;">{{ " " }}</td>
-                <td style="width:15%;">{{ " " }}</td>
-                <td style="width:10%;">{{ " " }}</td>
-                <td style="width:10%;">{{ " " }}</td>
-                <td style="width:10%;">{{ " " }}</td>
-                <td style="width:15%;">{{ " " }}</td>
-            </tr>
-            <tr >
-                <td style="width:10%;">&nbsp;</td>
-                <td style="width:30%;">{{ " " }}</td>
-                <td style="width:15%;">{{ " " }}</td>
-                <td style="width:10%;">{{ " " }}</td>
-                <td style="width:10%;">{{ " " }}</td>
-                <td style="width:10%;">{{ " " }}</td>
-                <td style="width:15%;">{{ " " }}</td>
-            </tr>
-            <tr >
-                <td style="width:10%;">&nbsp;</td>
-                <td style="width:30%;">{{ " " }}</td>
-                <td style="width:15%;">{{ " " }}</td>
-                <td style="width:10%;">{{ " " }}</td>
-                <td style="width:10%;">{{ " " }}</td>
-                <td style="width:10%;">{{ " " }}</td>
-                <td style="width:15%;">{{ " " }}</td>
-            </tr>
-            <tr >
-                <td style="width:10%;">&nbsp;</td>
-                <td style="width:30%;">{{ " " }}</td>
-                <td style="width:15%;">{{ " " }}</td>
-                <td style="width:10%;">{{ " " }}</td>
-                <td style="width:10%;">{{ " " }}</td>
-                <td style="width:10%;">{{ " " }}</td>
-                <td style="width:15%;">{{ " " }}</td>
-            </tr>
-            <tr >
-                <td style="width:10%;">&nbsp;</td>
-                <td style="width:30%;">{{ " " }}</td>
-                <td style="width:15%;">{{ " " }}</td>
-                <td style="width:10%;">{{ " " }}</td>
-                <td style="width:10%;">{{ " " }}</td>
-                <td style="width:10%;">{{ " " }}</td>
-                <td style="width:15%;">{{ " " }}</td>
-            </tr>
-            <tr >
-                <td style="width:10%;">&nbsp;</td>
-                <td style="width:30%;">{{ " " }}</td>
-                <td style="width:15%;">{{ " " }}</td>
-                <td style="width:10%;">{{ " " }}</td>
-                <td style="width:10%;">{{ " " }}</td>
-                <td style="width:10%;">{{ " " }}</td>
-                <td style="width:15%;">{{ " " }}</td>
+            <tr>
+                <td style="width:5%; border-top: 0; border-bottom: 0;">&nbsp;</td>
+                <td style="width:25%; border-top: 0; border-bottom: 0;">{{ " " }}</td>
+                <td style="width:8%; border-top: 0; border-bottom: 0;">{{ " " }}</td>
+                <td style="width:8.33%; border-top: 0; border-bottom: 0;">{{ " " }}</td>
+                <td style="width:8.33%; border-top: 0; border-bottom: 0;">{{ " " }}</td>
+                <td style="width:8.33%; border-top: 0; border-bottom: 0;">{{ " " }}</td>
+               <td style="width:8.33%; border-top: 0; border-bottom: 0;">{{ " " }}</td>
+                <td style="width:8.33%; border-top: 0; border-bottom: 0;">{{ " " }}</td>
+                <td style="width:8.33%; border-top: 0; border-bottom: 0;">{{ " " }}</td>
+                <td style="width:12%; border-top: 0; border-bottom: 0;">{{ " " }}</td>
             </tr>
         {% endif %}
 
-        <tr>
-            <td colspan="3" rowspan="3">
+        <tr class="invoice_property">
+            <td colspan="5" rowspan="3">
                 Total Invoice Amount in words : <b>{{ order_total.str_total_in_words }}</b>
             </td>
-            <td colspan="3">Total Amount Before Tax</td>
+            <td colspan="4">Total Amount Before Tax</td>
             <td style="width:15%;">{{ order_total.total }}</td>
         </tr>
-        <tr>
-            <td colspan="3">ADD : <b>CGST</b> {{ settingGST.setting_cgst }}%</td>
+        <tr class="invoice_property">
+            <td colspan="4"><b>TOTAL CGST</b></td>
             <td style="width:15%;">{{ order_total.cgst }}</td>
         </tr>
-        <tr>
-            <td colspan="3">ADD : <b>SGST</b> {{ settingGST.setting_sgst }}%</td>
+        <tr class="invoice_property">
+            <td colspan="4"><b>TOTAL SGST</b></td>
             <td style="width:15%;">{{ order_total.sgst }}</td>
         </tr>
-        <tr>
-            <td colspan="3" rowspan="4" style="text-align: left;padding: 3px;">
+        <tr class="invoice_property">
+            <td colspan="5" rowspan="5" style="text-align: left;padding: 3px;">
                 <table>
                     <tr>
                         <td colspan="2"><b>Bank Details:</b></td>
@@ -359,24 +354,28 @@
 
 
             </td>
-            <td colspan="3">ADD : <b>IGST</b> {{ settingGST.setting_igst }}%</td>
+            <td colspan="4"><b>TOTAL IGST</b></td>
             <td style="width:15%;">{{ order_total.igst }}</td>
         </tr>
-        <tr>
-            <td colspan="3">Tax Amount:<b>GST</b></td>
+        <tr class="invoice_property">
+            <td colspan="4">Tax Amount:<b>GST</b></td>
             <td style="width:15%;">{{ order_total.total_tax }}</td>
         </tr>
-        <tr>
-            <td colspan="3">Rounded</td>
+        <tr class="invoice_property">
+            <td colspan="4">Rounded</td>
             <td style="width:15%;">{{ order_total.order_total_rounded }}</td>
         </tr>
-        <tr>
-            <td colspan="3"><b>TOTAL AMOUNT</b></td>
+        <tr class="invoice_property">
+            <td colspan="4">Packing Charges</td>
+            <td style="width:15%;">{% if packaging_total %}{{ packaging_total }} {% else %} 0 {% endif %}</td>
+        </tr>
+        <tr class="invoice_property">
+            <td colspan="4"><b>TOTAL AMOUNT</b></td>
             <td style="width:15%;">INR {{ order_total.grand_total }}</td>
         </tr>
 
         <tr>
-            <td colspan="3" style="font-size: 12px; text-align: left;padding: 2px;">
+            <td colspan="4" style="font-size: 12px; text-align: left;padding: 2px;">
                 <b>Terms & Conditions :</b>
                 {% for tc in terms_conditions %}
                     <br>{{ forloop.counter }}. {{ tc.term_condition }}
@@ -385,7 +384,7 @@
             <td style="font-size: 14px">
                 Common Seal
             </td>
-            <td colspan="3" style="">
+            <td colspan="5" style="">
                 <p style="font-size: 9px;">Certified that the particulars given above are true and correct.</p>
                 <p style="font-size: 15px;">For ASHAPURI INDUSTRIES</p>
                 <br>

@@ -21,7 +21,7 @@ class Account(models.Model):
     )
     full_name = models.CharField(max_length=300, blank=False, null=False)
     email = models.EmailField(max_length=254, blank=True, null=True)
-    mobile_number = models.CharField(max_length=12, blank=False, null=False)
+    mobile_number = models.CharField(max_length=12, blank=True, null=True, default="")
     other_mobile_number = models.CharField(max_length=12, blank=False, null=False)
     image = models.ImageField(upload_to='', blank=True, null=True)
     is_approved = models.BooleanField(default=True, help_text='Used for approving user registration.')

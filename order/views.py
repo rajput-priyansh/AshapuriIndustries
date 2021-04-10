@@ -72,21 +72,11 @@ def customer_order(request):
         if order and products:
             try:
                 customer_order = CustomerOrder()
-
                 customer_order.user = Account.objects.get(pk=order['user'])
-                customer_order.settingGST = SettingGST.objects.get(pk=order['settingGst'])
+                # customer_order.settingGST = SettingGST.objects.get(pk=order['settingGst'])
 
-                if 'description' in order and order['description']:
-                    customer_order.description = order['description']
-
-                if 'shipping_address' in order and order['shipping_address']:
-                    customer_order.shipping_address = order['shipping_address']
-
-                if 'discount' in order and order['discount']:
-                    customer_order.discount = order['discount']
-
-                if 'delivery_date' in order and order['delivery_date']:
-                    customer_order.delivery_date = order['delivery_date']
+                if 'packaging_total' in order and order['packaging_total']:
+                    customer_order.packaging_total = order['packaging_total']
 
                 if 'invoice_date' in order and order['invoice_date']:
                     customer_order.invoice_date = order['invoice_date']
@@ -103,8 +93,8 @@ def customer_order(request):
                 if 'state_code' in order and order['state_code']:
                     customer_order.state_code = order['state_code']
 
-                if 'order_number' in order and order['order_number']:
-                    customer_order.order_number = order['order_number']
+                if 'invoice_number' in order and order['invoice_number']:
+                    customer_order.invoice_number = order['invoice_number']
 
                 customer_order.save()
 
@@ -113,7 +103,8 @@ def customer_order(request):
                     p = OrderProducts(product=Product.objects.get(pk=product['product']),
                                       no_of_bag=product['size'],
                                       bag_wight_unit=BagWightUnit.objects.get(pk=product['unit']),
-                                      rate=product['rate'], customer_order=customer_order)
+                                      rate=product['rate'], settingGST=SettingGST.objects.get(pk=product['settingGst']),
+                                      customer_order=customer_order)
                     total += (p.bag_wight_unit.wight * p.no_of_bag) * p.rate
                     p.save()
 

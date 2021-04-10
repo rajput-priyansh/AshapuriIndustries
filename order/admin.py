@@ -23,9 +23,9 @@ class ChoiceOrderProductInline(admin.TabularInline):
 class CustomerOrderAdmin(admin.ModelAdmin):
     empty_value_display = '-empty-'
     # filter_horizontal = ['order_products']
-    list_display = ['customer_user', 'original_invoice', 'duplicate_invoice', 'triplicate_invoice', 'order_number',
-                    'shipping_address', 'total', 'cgst', 'sgst', 'igst', 'grand_total', 'creation_date',
-                    'delivery_date', 'all_order_product']
+    list_display = ['customer_user', 'original_invoice', 'duplicate_invoice', 'triplicate_invoice', 'invoice_number',
+                    'total', 'cgst', 'sgst', 'igst', 'grand_total', 'creation_date',
+                    'all_order_product']
     list_filter = [
         'status',
     ]
@@ -34,8 +34,8 @@ class CustomerOrderAdmin(admin.ModelAdmin):
         'user__full_name',
     ]
 
-    fields = ['user', 'delivery_date', 'invoice_date', 'status', 'invoice_type', 'description', 'shipping_address',
-              'state', 'state_code', 'transportation_mode', 'vehicle_number', 'settingGST']
+    fields = ['user', 'invoice_date', 'status', 'invoice_type',
+              'state', 'state_code', 'transportation_mode', 'vehicle_number', 'settingGST', 'packaging_total']
 
     inlines = [ChoiceOrderProductInline]
 

@@ -56,10 +56,6 @@
                 format: 'YYYY-MM-DD'
             });
 
-            $("#delivery_date").on("dp.change", function (e) {
-                angular.element(document.getElementById('mainBody')).scope().setDeliveryDate($('#delivery_date').data('date'));
-                //$('#enddatetimepicker').data("DateTimePicker").minDate(e.date);
-            });
 
         };
     </script>
@@ -80,16 +76,10 @@
             //$scope.API_URL = "http://127.0.0.1:8000";
             $scope.API_URL = "https://ashapuriindustries2.pythonanywhere.com";
 
-            $scope.delivery_date = null;
-
             $scope.orderProducts = [];
             var product = {"product": null, "unit": null, "size": null, "rate": null};
             $scope.orderProducts.push(product);
 
-            $scope.setDeliveryDate = function (date) {
-                $scope.delivery_date = date;
-                $scope.order['delivery_date'] = $scope.delivery_date;
-            };
 
             $scope.addProductOrder = function () {
                 console.log("addProductOrder call");
@@ -115,7 +105,7 @@
                 url: $scope.API_URL + '/accounts/setting-gst/'
             }).then(function mySuccess(response) {
                 console.log(response.data);
-                $scope.settingGst = response.data;
+                $scope.settingGsts = response.data;
             }, function myError(response) {
             });
 
@@ -206,20 +196,8 @@
             </div>
 
             <div class="form-group">
-                <label for="description">Description</label>
-                <textarea class="form-control" ng-model="order.description" id="description" rows="3"
-                          required> </textarea>
-            </div>
-
-            <div class="form-group">
-                <label for="order_number">order number</label>
-                <input type="text" class="form-control" ng-model="order.order_number" id="order_number" placeholder="order number" required>
-            </div>
-
-            <div class="form-group">
-                <label for="shipping_address">Shipping Address</label>
-                <textarea class="form-control" ng-model="order.shipping_address" id="shipping_address" rows="3"
-                          required> </textarea>
+                <label for="invoice_number">Invoice number</label>
+                <input type="text" class="form-control" ng-model="order.invoice_number" id="invoice_number" placeholder="Invoice number" required>
             </div>
 
             <div class="form-group">
@@ -232,23 +210,6 @@
                 <input type="number" class="form-control" ng-model="order.state_code" id="state_code" placeholder="23">
             </div>
 
-            <div class="form-group">
-                <label for="exampleFormControlInput1">Delivery Date</label>
-                <div class='input-group date' id='delivery_date'>
-                    <input type='text' class="form-control"/>
-                    <span class="input-group-addon">
-                        <span class="glyphicon glyphicon-calendar"></span>
-                    </span>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label for="settinggst">Select GST</label>
-                <select class="form-control" ng-model="order.settingGst" id="settinggst"
-                        ng-options="item.id as (item | gstName) for item in settingGst" required>
-                    <option value=""> Select GST for this order *</option>
-                </select>
-            </div>
 
             <div class="row" ng-repeat="p in orderProducts">
                 <div class="form-group col-sm-3">
@@ -275,6 +236,15 @@
                     <input type="number" required class="form-control" id="rate" placeholder="10.00"
                            ng-model="p.rate" step="0.01">
                 </div>
+
+                <div class="form-group col-lg-2">
+                <label for="settinggst">Select GST</label>
+                <select class="form-control" ng-model="p.settingGst" id="settingGst"
+                        ng-options="item.id as (item | gstName) for item in settingGsts" required>
+                    <option value=""> Select GST for this order *</option>
+                </select>
+            </div>
+
                 <div class="form-group col-lg-1">
 
                     <div class="remove_button" ng-hide="$index==0">
@@ -294,8 +264,8 @@
             </div>
 
             <div class="form-group">
-                <label for="exampleFormControlInput1">Discount</label>
-                <input type="number" class="form-control" ng-model="order.discount" id="discount" placeholder="100.00">
+                <label for="exampleFormControlInput1">packaging Charge</label>
+                <input type="number" class="form-control" ng-model="order.packaging_total" id="packaging_total" placeholder="100.00">
             </div>
 
             <div class="form-group">
