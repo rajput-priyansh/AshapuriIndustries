@@ -93,9 +93,6 @@ def customer_order(request):
                 if 'state_code' in order and order['state_code']:
                     customer_order.state_code = order['state_code']
 
-                if 'invoice_number' in order and order['invoice_number']:
-                    customer_order.invoice_number = order['invoice_number']
-
                 customer_order.save()
 
                 total = 0

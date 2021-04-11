@@ -124,7 +124,7 @@
                         {% elif invoice_type == 2 %}
                             Duplicate for supplier/Transporter
                         {% else %}
-                            Triplicate for Supplier
+                            Transportation for Supplier
                         {% endif %}
                     </b>
                 </td>
@@ -135,7 +135,7 @@
                 <td style="width: 40%; text-align: left;">
                     <table style="width: 100%;">
                         <tr>
-                            <td class="sub_title" style="width: 50%;"><b>INV NO : {{ invoice_number }}</b></td>
+                            <td class="sub_title" style="width: 50%;"><b>INV NO : {{ id }}</b></td>
                             <td class="sub_title" style="width: 50%;"><b>DATE : {{ str_invoice_date }}</b></td>
                         </tr>
                     </table>

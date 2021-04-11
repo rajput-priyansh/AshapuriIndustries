@@ -46,7 +46,7 @@ class CustomerOrder(models.Model):
     )
     INVOICE_ORIGINAL = 'Original for  Recipient'
     INVOICE_DUPLICATE = 'Duplicate for supplier/Transporter'
-    INVOICE_TRIPLICATE = 'Triplicate for Supplier'
+    INVOICE_TRIPLICATE = 'Transportation for Supplier'
 
     INVOICE_CHOICES = (
         (1, INVOICE_ORIGINAL),

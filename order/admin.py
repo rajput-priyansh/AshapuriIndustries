@@ -23,7 +23,7 @@ class ChoiceOrderProductInline(admin.TabularInline):
 class CustomerOrderAdmin(admin.ModelAdmin):
     empty_value_display = '-empty-'
     # filter_horizontal = ['order_products']
-    list_display = ['customer_user', 'original_invoice', 'duplicate_invoice', 'triplicate_invoice', 'invoice_number',
+    list_display = ['customer_user', 'original_invoice', 'duplicate_invoice', 'triplicate_invoice', 'id',
                     'total', 'cgst', 'sgst', 'igst', 'grand_total', 'creation_date',
                     'all_order_product']
     list_filter = [
@@ -35,7 +35,7 @@ class CustomerOrderAdmin(admin.ModelAdmin):
     ]
 
     fields = ['user', 'invoice_date', 'status', 'invoice_type',
-              'state', 'state_code', 'transportation_mode', 'vehicle_number', 'settingGST', 'packaging_total']
+              'state', 'state_code', 'transportation_mode', 'vehicle_number', 'packaging_total']
 
     inlines = [ChoiceOrderProductInline]
 
@@ -52,7 +52,7 @@ class CustomerOrderAdmin(admin.ModelAdmin):
 
     def triplicate_invoice(self, obj):
         return '<a href="%s/%s/%s" target="_blank">%s</a>' % (
-        settings.DOMAIN_NAME + '/order', obj.id, 3, 'Triplicate Invoice')
+        settings.DOMAIN_NAME + '/order', obj.id, 3, 'Transportation Invoice')
 
     original_invoice.allow_tags = True
     original_invoice.short_description = 'Original Invoice'
@@ -61,7 +61,7 @@ class CustomerOrderAdmin(admin.ModelAdmin):
     duplicate_invoice.short_description = 'Duplicate Invoice'
 
     triplicate_invoice.allow_tags = True
-    triplicate_invoice.short_description = 'Triplicate Invoice'
+    triplicate_invoice.short_description = 'Transportation Invoice'
 
 
 admin.site.register(BagWightUnit, BagWightUnitAdmin)
