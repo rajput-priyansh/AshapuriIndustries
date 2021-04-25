@@ -223,17 +223,17 @@
                     {{ forloop.counter }}
                 </td>
                 <td style="width:25%;">
-                    {{ product.product.product_name }} - {{ product.product.product_type }}
+                    {{ product.product.product_name }}
                 </td>
                 <td style="width:8%;">
                     {% if product.product.hsn_number %} {{ product.product.hsn_number }} {% else %}
                         {{ " " }} {% endif %}
                 </td>
                 <td style="width:8.33%;">
-                    {{ product.no_of_bag }}({{ product.bag_wight_unit.display_name }})
+                    {{ product.no_of_bag }}<br/>({{ product.bag_wight_unit.display_name }})
                 </td>
                 <td style="width:8.33%;">
-                    {{ product.weight }}{{ product.bag_wight_unit.unit }}
+                    {{ product.weight }}<br/>{{ product.bag_wight_unit.unit }}
                 </td>
                 <td style="width:8.33%;">
                     {{ product.rate }}

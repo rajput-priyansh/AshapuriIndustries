@@ -12,7 +12,7 @@ class BagWightUnitAdmin(admin.ModelAdmin):
 
 
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ['product_name', 'product_type', 'hsn_number']
+    list_display = ['product_name', 'hsn_number']
 
 
 class ChoiceOrderProductInline(admin.TabularInline):

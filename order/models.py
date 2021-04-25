@@ -24,7 +24,6 @@ class BagWightUnit(models.Model):
 
 class Product(models.Model):
     product_name = models.CharField(max_length=100, blank=False, null=False, help_text="Product simple Name")
-    product_type = models.CharField(max_length=50, help_text="Product Type")
     hsn_number = models.CharField(max_length=10, blank=True, null=True, help_text='HSN/ACS number')
 
     def __unicode__(self):

@@ -11,7 +11,7 @@ import math
 class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
-        fields = ['id', 'product_name', 'product_type', 'hsn_number']
+        fields = ['id', 'product_name', 'hsn_number']
 
 
 class BagWightUnitSerializer(serializers.ModelSerializer):
