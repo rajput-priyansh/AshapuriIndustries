@@ -152,7 +152,7 @@
                         <tr>
                             <td class="sub_title" style="width: 50%;"><b>Challan NO
                                 : {{ challan_number }}</b></td>
-                            <td class="sub_title" style="width: 50%;"><b>DATE : {{ str_challan_date }}</b></td>
+                            <td class="sub_title" style="width: 50%;"><b>DATE : % if str_challan_date %} {{ str_challan_date }} {% else %}{{ " " }}{% endif %}</b></td>
                         </tr>
                     </table>
 
