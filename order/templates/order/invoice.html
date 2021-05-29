@@ -150,8 +150,9 @@
                 <td style="width: 40%; text-align: left;">
                     <table style="width: 100%;">
                         <tr>
-                            <td class="sub_title" colspan="2" style="width: 100%;"><b>Challan NO
+                            <td class="sub_title" style="width: 50%;"><b>Challan NO
                                 : {{ challan_number }}</b></td>
+                            <td class="sub_title" style="width: 50%;"><b>DATE : {{ str_challan_date }}</b></td>
                         </tr>
                     </table>
 
@@ -164,7 +165,7 @@
                     <table style="width: 100%;">
                         <tr>
                             <td class="sub_title" colspan="2" style="width: 100%;"><b>TRANSPORT :
-                                {% if shipping_address %}{{ shipping_address }} {% else %}{{ " " }}{% endif %}</b></td>
+                                {% if transport %}{{ transport }} {% else %}{{ " " }}{% endif %}</b></td>
                         </tr>
                     </table>
                 </td>

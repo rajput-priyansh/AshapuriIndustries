@@ -60,6 +60,15 @@
                 //$('#enddatetimepicker').data("DateTimePicker").minDate(e.date);
             });
 
+            $('#challan_date').datetimepicker({
+                format: 'YYYY-MM-DD'
+            });
+
+            $("#challan_date").on("dp.change", function (e) {
+                angular.element(document.getElementById('mainBody')).scope().setChallanDate($('#challan_date').data('date'));
+                //$('#enddatetimepicker').data("DateTimePicker").minDate(e.date);
+            });
+
 
         };
     </script>
@@ -87,6 +96,11 @@
             $scope.setDeliveryDate = function (date) {
                 $scope.invoice_date = date;
                 $scope.order['invoice_date'] = $scope.invoice_date;
+            };
+
+            $scope.setChallanDate = function (date) {
+                $scope.challan_date = date;
+                $scope.order['challan_date'] = $scope.challan_date;
             };
 
             $scope.addProductOrder = function () {
@@ -219,6 +233,16 @@
                 </div>
             </div>
 
+            <div class="form-group">
+                <label for="exampleFormControlInput1">Challan Date</label>
+                <div class='input-group date' id='challan_date'>
+                    <input type='text' class="form-control"/>
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                </div>
+            </div>
+
             <!--<div class="form-group">
                 <label for="exampleFormControlstatecode">State Code</label>
                 <input type="number" class="form-control" ng-model="order.state_code" id="state_code" placeholder="23">
@@ -290,6 +314,11 @@
             <div class="form-group">
                 <label for="exampleFormControlInputvn">Vehicle Number</label>
                 <input type="text" class="form-control" ng-model="order.vehicle_number" id="vehicle_number" placeholder="GJ06 JP 1212">
+            </div>
+
+            <div class="form-group">
+                <label for="exampleFormControlInputvn">Transport Details</label>
+                <input type="text" class="form-control" ng-model="order.transport" id="transport" placeholder="Transport by">
             </div>
 
             <div class="button_bg_custom">

@@ -119,15 +119,16 @@ class CustomerOrderSerializer(serializers.ModelSerializer):
     str_status = serializers.SerializerMethodField(read_only=True)
     str_creation_date = serializers.SerializerMethodField(read_only=True)
     str_invoice_date = serializers.SerializerMethodField(read_only=True)
+    str_challan_date = serializers.SerializerMethodField(read_only=True)
     order_total = serializers.SerializerMethodField(read_only=True)
     user = ProfileSerializer()
 
     class Meta:
         model = CustomerOrder
-        fields = ['id', 'invoice_number', 'challan_number', 'status', 'products',
+        fields = ['id', 'invoice_number', 'challan_number', 'transport', 'status', 'products',
                   'creation_date', 'user', 'host', 'setting_account', 'transportation_mode',
                   'vehicle_number', 'str_status', 'state_code', 'state', 'terms_conditions', 'str_creation_date',
-                  'invoice_type', 'order_total', 'str_invoice_date', 'packaging_total']
+                  'invoice_type', 'order_total', 'str_invoice_date', 'str_challan_date',  'packaging_total']
 
     def get_products(self, obj):
         order_products = OrderProducts.objects.filter(customer_order=obj)
@@ -158,6 +159,9 @@ class CustomerOrderSerializer(serializers.ModelSerializer):
 
     def get_str_invoice_date(self, obj):
         return obj.invoice_date.strftime("%d-%m-%Y")
+
+    def get_str_challan_date(self, obj):
+        return obj.challan_date.strftime("%d-%m-%Y")
 
     def get_str_status(self, obj):
         switcher = {

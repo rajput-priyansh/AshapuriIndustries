@@ -99,6 +99,12 @@ def customer_order(request):
                 if 'state' in order and order['state']:
                     customer_order.state = order['state']
 
+                if 'transport' in order and order['transport']:
+                    customer_order.transport = order['transport']
+
+                if 'challan_date' in order and order['challan_date']:
+                    customer_order.challan_date = order['challan_date']
+
                 # if 'state_code' in order and order['state_code']:
                 #     customer_order.state_code = order['state_code']
 

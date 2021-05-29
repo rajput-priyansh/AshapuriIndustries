@@ -67,11 +67,13 @@ class CustomerOrder(models.Model):
     discount = models.FloatField(default=0)
     net_total = models.FloatField(default=0)
     grand_total = models.FloatField(default=0)
-    transportation_mode = models.CharField(max_length=50, help_text="Transportation Mode", default="")
-    vehicle_number = models.CharField(max_length=50, help_text="Vehicle Number", default="")
-    challan_number = models.CharField(max_length=50, help_text="Challan Number", default="")
+    transportation_mode = models.CharField(max_length=50, help_text="Transportation Mode", default="", blank=True)
+    vehicle_number = models.CharField(max_length=50, help_text="Vehicle Number", default="", blank=True)
+    challan_number = models.CharField(max_length=50, help_text="Challan Number", default="", blank=True)
     invoice_number = models.CharField(max_length=100, help_text="Invoice number", blank=True, null=True)
+    transport = models.CharField(max_length=100, help_text="Transport By", blank=True, null=True, default="")
     invoice_date = models.DateTimeField('invoice date', blank=True, default=timezone.now)
+    challan_date = models.DateTimeField('Challan date', blank=True, null=True)
     packaging_total = models.FloatField(default=0, help_text="Packaging charge")
 
     def __unicode__(self):

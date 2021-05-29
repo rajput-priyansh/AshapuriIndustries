@@ -34,8 +34,8 @@ class CustomerOrderAdmin(admin.ModelAdmin):
         'user__full_name',
     ]
 
-    fields = ['user', 'invoice_number', 'challan_number', 'invoice_date', 'status', 'invoice_type',
-              'state', 'state_code', 'transportation_mode', 'vehicle_number', 'packaging_total']
+    fields = ['user', 'invoice_number', 'challan_number', 'invoice_date', 'challan_date', 'status', 'invoice_type',
+              'state', 'state_code', 'transportation_mode', 'vehicle_number', 'packaging_total', 'transport']
 
     inlines = [ChoiceOrderProductInline]
 
