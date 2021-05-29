@@ -161,7 +161,10 @@ class CustomerOrderSerializer(serializers.ModelSerializer):
         return obj.invoice_date.strftime("%d-%m-%Y")
 
     def get_str_challan_date(self, obj):
-        return obj.challan_date.strftime("%d-%m-%Y")
+        if obj.challan_date:
+            return obj.challan_date.strftime("%d-%m-%Y")
+        else:
+            ""
 
     def get_str_status(self, obj):
         switcher = {
