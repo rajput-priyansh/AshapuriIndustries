@@ -124,7 +124,7 @@ class CustomerOrderSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CustomerOrder
-        fields = ['id', 'invoice_number', 'status', 'products',
+        fields = ['id', 'invoice_number', 'challan_number', 'status', 'products',
                   'creation_date', 'user', 'host', 'setting_account', 'transportation_mode',
                   'vehicle_number', 'str_status', 'state_code', 'state', 'terms_conditions', 'str_creation_date',
                   'invoice_type', 'order_total', 'str_invoice_date', 'packaging_total']

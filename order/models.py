@@ -69,6 +69,7 @@ class CustomerOrder(models.Model):
     grand_total = models.FloatField(default=0)
     transportation_mode = models.CharField(max_length=50, help_text="Transportation Mode", default="")
     vehicle_number = models.CharField(max_length=50, help_text="Vehicle Number", default="")
+    challan_number = models.CharField(max_length=50, help_text="Challan Number", default="")
     invoice_number = models.CharField(max_length=100, help_text="Invoice number", blank=True, null=True)
     invoice_date = models.DateTimeField('invoice date', blank=True, default=timezone.now)
     packaging_total = models.FloatField(default=0, help_text="Packaging charge")
@@ -112,10 +113,10 @@ class OrderProducts(models.Model):
 
 @receiver(post_save, sender=OrderProducts, dispatch_uid="update_tax_count")
 def update_tax(sender, instance, **kwargs):
-    print(instance.customer_order)
-    print(instance.customer_order.id)
-    print(instance.product)
-    print(CustomerOrder.objects.get(pk=instance.customer_order.id))
+    # print(instance.customer_order)
+    # print(instance.customer_order.id)
+    # print(instance.product)
+    # print(CustomerOrder.objects.get(pk=instance.customer_order.id))
 
     total = instance.customer_order.total
     setting_account = SettingAccount.objects.last()

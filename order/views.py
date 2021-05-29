@@ -78,6 +78,12 @@ def customer_order(request):
                 if 'packaging_total' in order and order['packaging_total']:
                     customer_order.packaging_total = order['packaging_total']
 
+                if 'invoice_number' in order and order['invoice_number']:
+                    customer_order.invoice_number = order['invoice_number']
+
+                if 'challan_number' in order and order['challan_number']:
+                    customer_order.challan_number = order['challan_number']
+
                 if 'invoice_date' in order and order['invoice_date']:
                     customer_order.invoice_date = order['invoice_date']
 
@@ -87,11 +93,14 @@ def customer_order(request):
                 if 'vehicle_number' in order and order['vehicle_number']:
                     customer_order.vehicle_number = order['vehicle_number']
 
+                if 'invoice_date' in order and order['invoice_date']:
+                    customer_order.invoice_date = order['invoice_date']
+
                 if 'state' in order and order['state']:
                     customer_order.state = order['state']
 
-                if 'state_code' in order and order['state_code']:
-                    customer_order.state_code = order['state_code']
+                # if 'state_code' in order and order['state_code']:
+                #     customer_order.state_code = order['state_code']
 
                 customer_order.save()
 

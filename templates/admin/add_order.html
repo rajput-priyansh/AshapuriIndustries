@@ -51,9 +51,13 @@
     <script type="text/javascript">
 
         window.onload = function () {
-
-            $('#delivery_date').datetimepicker({
+            $('#invoice_date').datetimepicker({
                 format: 'YYYY-MM-DD'
+            });
+
+            $("#invoice_date").on("dp.change", function (e) {
+                angular.element(document.getElementById('mainBody')).scope().setDeliveryDate($('#invoice_date').data('date'));
+                //$('#enddatetimepicker').data("DateTimePicker").minDate(e.date);
             });
 
 
@@ -80,6 +84,10 @@
             var product = {"product": null, "unit": null, "size": null, "rate": null};
             $scope.orderProducts.push(product);
 
+            $scope.setDeliveryDate = function (date) {
+                $scope.invoice_date = date;
+                $scope.order['invoice_date'] = $scope.invoice_date;
+            };
 
             $scope.addProductOrder = function () {
                 console.log("addProductOrder call");
@@ -106,15 +114,6 @@
             }).then(function mySuccess(response) {
                 console.log(response.data);
                 $scope.settingGsts = response.data;
-            }, function myError(response) {
-            });
-
-            $http({
-                method: 'GET',
-                url: $scope.API_URL + '/order/product-sizes/'
-            }).then(function mySuccess(response) {
-                console.log(response.data);
-                $scope.prodtc_sizes = response.data;
             }, function myError(response) {
             });
 
@@ -195,10 +194,15 @@
                 </select>
             </div>
 
-            <!--<div class="form-group">
+            <div class="form-group">
                 <label for="invoice_number">Invoice number</label>
                 <input type="text" class="form-control" ng-model="order.invoice_number" id="invoice_number" placeholder="Invoice number" required>
-            </div> -->
+            </div>
+
+            <div class="form-group">
+                <label for="challan_number">Challan number</label>
+                <input type="text" class="form-control" ng-model="order.challan_number" id="challan_number" placeholder="Challan number" required>
+            </div>
 
             <div class="form-group">
                 <label for="exampleFormControlstate">State</label>
@@ -206,9 +210,19 @@
             </div>
 
             <div class="form-group">
+                <label for="exampleFormControlInput1">Invoice Date</label>
+                <div class='input-group date' id='invoice_date'>
+                    <input type='text' class="form-control"/>
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                </div>
+            </div>
+
+            <!--<div class="form-group">
                 <label for="exampleFormControlstatecode">State Code</label>
                 <input type="number" class="form-control" ng-model="order.state_code" id="state_code" placeholder="23">
-            </div>
+            </div>-->
 
 
             <div class="row" ng-repeat="p in orderProducts">

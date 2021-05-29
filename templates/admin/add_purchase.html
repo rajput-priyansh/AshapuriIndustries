@@ -53,12 +53,12 @@
 
         window.onload = function () {
 
-            $('#delivery_date').datetimepicker({
+            $('#invoice_date').datetimepicker({
                 format: 'YYYY-MM-DD'
             });
 
-            $("#delivery_date").on("dp.change", function (e) {
-                angular.element(document.getElementById('mainBody')).scope().setDeliveryDate($('#delivery_date').data('date'));
+            $("#invoice_date").on("dp.change", function (e) {
+                angular.element(document.getElementById('mainBody')).scope().setDeliveryDate($('#invoice_date').data('date'));
                 //$('#enddatetimepicker').data("DateTimePicker").minDate(e.date);
             });
 
@@ -81,15 +81,15 @@
             $scope.API_URL = "http://127.0.0.1:8000";
             //$scope.API_URL = "https://priyanshrajput.pythonanywhere.com";
 
-            $scope.delivery_date = null;
+            $scope.invoice_date = null;
 
             $scope.orderProducts = [];
             var product = {"product": null, "unit": null, "size": null, "weight": null, "rate": null};
             $scope.orderProducts.push(product);
 
             $scope.setDeliveryDate = function (date) {
-                $scope.delivery_date = date;
-                $scope.order['delivery_date'] = $scope.delivery_date;
+                $scope.invoice_date = date;
+                $scope.order['invoice_date'] = $scope.invoice_date;
             };
 
             $scope.addProductOrder = function () {
