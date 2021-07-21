@@ -23,7 +23,7 @@ class ChoiceOrderProductInline(admin.TabularInline):
 class CustomerOrderAdmin(admin.ModelAdmin):
     empty_value_display = '-empty-'
     # filter_horizontal = ['order_products']
-    list_display = ['customer_user', 'original_invoice', 'duplicate_invoice', 'triplicate_invoice', 'id',
+    list_display = ['customer_user', 'original_invoice', 'duplicate_invoice', 'triplicate_invoice', 'invoice_number',
                     'total', 'cgst', 'sgst', 'igst', 'grand_total', 'creation_date',
                     'all_order_product']
     list_filter = [
